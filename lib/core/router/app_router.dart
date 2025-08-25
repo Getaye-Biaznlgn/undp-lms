@@ -1,0 +1,66 @@
+import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:lms/features/main/presentation/pages/main_page.dart';
+import 'package:lms/features/auth/presentation/pages/splash_page.dart';
+import 'package:lms/features/auth/presentation/pages/onboarding_page.dart';
+
+class AppRouter {
+  static const String splash = '/splash';
+  static const String onboarding = '/onboarding';
+  static const String home = '/home';
+  static const String initial = '/';
+
+  static final GoRouter router = GoRouter(
+    initialLocation: initial,
+    routes: [
+      GoRoute(
+        path: initial,
+        redirect: (context, state) => splash,
+      ),
+      GoRoute(
+        path: splash,
+        pageBuilder: (context, state) => CustomTransitionPage(
+          key: state.pageKey,
+          child: const SplashPage(),
+          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+            return FadeTransition(
+              opacity: animation,
+              child: child,
+            );
+          },
+        ),
+      ),
+      GoRoute(
+        path: onboarding,
+        pageBuilder: (context, state) => CustomTransitionPage(
+          key: state.pageKey,
+          child: const OnboardingPage(),
+          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+            return FadeTransition(
+              opacity: animation,
+              child: child,
+            );
+          },
+        ),
+      ),
+      GoRoute(
+        path: home,
+        pageBuilder: (context, state) => CustomTransitionPage(
+          key: state.pageKey,
+          child: const MainPage(),
+          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+            return FadeTransition(
+              opacity: animation,
+              child: child,
+            );
+          },
+        ),
+      ),
+    ],
+    errorBuilder: (context, state) => const Scaffold(
+      body: Center(
+        child: Text('Page not found'),
+      ),
+    ),
+  );
+}
