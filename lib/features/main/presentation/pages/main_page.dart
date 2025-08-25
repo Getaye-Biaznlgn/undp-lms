@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:lms/core/theme/app_theme.dart';
 import 'package:lms/features/main/presentation/bloc/main_bloc.dart';
 import 'package:lms/features/home/presentation/pages/home_page.dart';
@@ -42,25 +43,25 @@ class MainView extends StatelessWidget {
             onTap: (index) {
               context.read<MainBloc>().add(ChangeTab(index));
             },
-            items: const [
+            items:  [
               BottomNavigationBarItem(
-                icon: Icon(Icons.home_outlined),
-                activeIcon: Icon(Icons.home),
+                icon: Icon(Icons.home_outlined, size: 26.sp,),
+                activeIcon: Icon(Icons.home, size: 26.sp,),
                 label: 'Home',
               ),
               BottomNavigationBarItem(
-                icon: Icon(Icons.school_outlined),
-                activeIcon: Icon(Icons.school),
+                icon: Icon(Icons.school_outlined, size: 26.sp,),
+                activeIcon: Icon(Icons.school, size: 26.sp,),
                 label: 'Courses',
               ),
               BottomNavigationBarItem(
-                icon: Icon(Icons.bookmark_outline),
-                activeIcon: Icon(Icons.bookmark),
+                icon: Icon(Icons.bookmark_outline, size: 26.sp,),
+                activeIcon: Icon(Icons.bookmark, size: 26.sp,),
                 label: 'Saved',
               ),
               BottomNavigationBarItem(
-                icon: Icon(Icons.person_outline),
-                activeIcon: Icon(Icons.person),
+                icon: Icon(Icons.person_outline, size: 26.sp,),
+                activeIcon: Icon(Icons.person, size: 26.sp,),
                 label: 'Profile',
               ),
             ],

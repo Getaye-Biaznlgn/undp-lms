@@ -45,7 +45,7 @@ class _SplashPageState extends State<SplashPage>
 
     // Navigate to onboarding after 3 seconds
     Future.delayed(const Duration(seconds: 3), () {
-      context.go(AppRouter.onboarding);
+      context.go(AppRouter.home);
     });
   }
 
