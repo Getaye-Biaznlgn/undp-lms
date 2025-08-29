@@ -45,4 +45,36 @@ class AuthRepositoryImpl implements AuthRepository {
       return const Left(ServerFailure(message: errorMessage));
     }
   }
+
+  @override
+  Future<Either<Failure, LoginResponse>> forgotPassword(Map<String, dynamic> request) async {
+    try {
+      final response = await authDataSource.forgotPassword(request);
+      
+      if (response.success) {
+        return Right(LoginResponseModel.fromJson(response.data));
+      } else {
+        return Left(ServerFailure(message: response.error ?? ''));
+      }
+    } catch (exception, stackTrace) {
+      Logger().e(exception, stackTrace: stackTrace);
+      return const Left(ServerFailure(message: errorMessage));
+    }
+  }
+
+  @override
+  Future<Either<Failure, LoginResponse>> resetPassword(Map<String, dynamic> request) async {
+    try {
+      final response = await authDataSource.resetPassword(request);
+      
+      if (response.success) {
+        return Right(LoginResponseModel.fromJson(response.data));
+      } else {
+        return Left(ServerFailure(message: response.error ?? ''));
+      }
+    } catch (exception, stackTrace) {
+      Logger().e(exception, stackTrace: stackTrace);
+      return const Left(ServerFailure(message: errorMessage));
+    }
+  }
 }

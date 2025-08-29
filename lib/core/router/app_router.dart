@@ -5,12 +5,16 @@ import 'package:lms/features/auth/presentation/pages/splash_page.dart';
 import 'package:lms/features/auth/presentation/pages/onboarding_page.dart';
 import 'package:lms/features/auth/presentation/pages/login_page.dart';
 import 'package:lms/features/auth/presentation/pages/signup_page.dart';
+import 'package:lms/features/auth/presentation/pages/forgot_password_page.dart';
+import 'package:lms/features/auth/presentation/pages/reset_password_page.dart';
 
 class AppRouter {
   static const String splash = '/splash';
   static const String onboarding = '/onboarding';
   static const String login = '/login';
   static const String signup = '/signup';
+  static const String forgotPassword = '/forgot-password';
+  static const String resetPassword = '/reset-password';
   static const String home = '/home';
   static const String initial = '/';
 
@@ -65,6 +69,34 @@ class AppRouter {
         pageBuilder: (context, state) => CustomTransitionPage(
           key: state.pageKey,
           child: const SignupPage(),
+          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+            return FadeTransition(
+              opacity: animation,
+              child: child,
+            );
+          },
+        ),
+      ),
+      GoRoute(
+        path: forgotPassword,
+        pageBuilder: (context, state) => CustomTransitionPage(
+          key: state.pageKey,
+          child: const ForgotPasswordPage(),
+          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+            return FadeTransition(
+              opacity: animation,
+              child: child,
+            );
+          },
+        ),
+      ),
+      GoRoute(
+        path: resetPassword,
+        pageBuilder: (context, state) => CustomTransitionPage(
+          key: state.pageKey,
+          child: ResetPasswordPage(
+            email: state.uri.queryParameters['email'] ?? '',
+          ),
           transitionsBuilder: (context, animation, secondaryAnimation, child) {
             return FadeTransition(
               opacity: animation,

@@ -18,3 +18,19 @@ class SignupEvent extends AuthEvent {
   @override
   List<Object?> get props => [request];
 }
+
+class ForgotPasswordEvent extends AuthEvent {
+  final Map<String, dynamic> request;
+  ForgotPasswordEvent(this.request);
+
+  @override
+  List<Object?> get props => [request];
+}
+
+class ResetPasswordEvent extends AuthEvent {
+  final Map<String, dynamic> request;
+  ResetPasswordEvent(this.request);
+
+  @override
+  List<Object?> get props => [request];
+}

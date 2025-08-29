@@ -12,6 +12,8 @@ import 'package:lms/features/auth/data/repositories/auth_repository_impl.dart';
 import 'package:lms/features/auth/domain/repositories/auth_repository.dart';
 import 'package:lms/features/auth/domain/usecases/login_usecase.dart';
 import 'package:lms/features/auth/domain/usecases/signup_usecase.dart';
+import 'package:lms/features/auth/domain/usecases/forgot_password_usecase.dart';
+import 'package:lms/features/auth/domain/usecases/reset_password_usecase.dart';
 import 'package:lms/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:get_it/get_it.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
@@ -31,6 +33,8 @@ Future<void> init() async {
     () => AuthBloc(
       loginUseCase: sl(),
       signupUseCase: sl(),
+      forgotPasswordUseCase: sl(),
+      resetPasswordUseCase: sl(),
     ),
   );
 
@@ -39,6 +43,8 @@ Future<void> init() async {
   sl.registerLazySingleton(() => GetAllTodos(sl()));
   sl.registerLazySingleton(() => LoginUseCase(sl()));
   sl.registerLazySingleton(() => SignupUseCase(sl()));
+  sl.registerLazySingleton(() => ForgotPasswordUseCase(sl()));
+  sl.registerLazySingleton(() => ResetPasswordUseCase(sl()));
 
   // Repository
   sl.registerLazySingleton<TodoRepository>(
