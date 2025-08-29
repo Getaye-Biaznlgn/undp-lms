@@ -40,6 +40,16 @@ class _OnboardingPageState extends State<OnboardingPage> {
       color: AppTheme.accentColor,
     ),
   ];
+List<Widget> cols= [];
+  @override
+  void initState() {
+    super.initState();
+   cols= [
+  _buildSlide(_slides[0]),
+  _buildSlide(_slides[1]),
+  _buildSlide(_slides[2]),
+];
+  }
 
   @override
   void dispose() {
@@ -98,7 +108,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                 },
                 itemCount: _slides.length,
                 itemBuilder: (context, index) {
-                  return _buildSlide(_slides[index]);
+                  return cols[index];
                 },
               ),
             ),

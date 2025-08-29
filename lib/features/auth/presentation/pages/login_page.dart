@@ -265,7 +265,7 @@ class _LoginPageState extends State<LoginPage> {
                            type: ButtonType.outline,
                            size: ButtonSize.medium,
                            
-                           icon: Image.asset(AppImages.googleIcon),
+                           icon: Image.asset(AppImages.googleIcon, height: 25.h, width: 25.w,),
                          ),
                        ),
                      ],
