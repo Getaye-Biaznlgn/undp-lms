@@ -141,18 +141,18 @@ class CommonButton extends StatelessWidget {
       case ButtonSize.medium:
         return EdgeInsets.symmetric(horizontal: 24.w, vertical: 12.h);
       case ButtonSize.large:
-        return EdgeInsets.symmetric(horizontal: 32.w, vertical: 16.h);
+        return EdgeInsets.symmetric(horizontal: 32.w, vertical: 12.h);
     }
   }
 
   double _getBorderRadius() {
     switch (size) {
       case ButtonSize.small:
-        return 8.r;
-      case ButtonSize.medium:
-        return 12.r;
-      case ButtonSize.large:
         return 16.r;
+      case ButtonSize.medium:
+        return 24.r;
+      case ButtonSize.large:
+        return 32.r;
     }
   }
 
