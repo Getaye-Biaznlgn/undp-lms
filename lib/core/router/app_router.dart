@@ -3,10 +3,12 @@ import 'package:go_router/go_router.dart';
 import 'package:lms/features/main/presentation/pages/main_page.dart';
 import 'package:lms/features/auth/presentation/pages/splash_page.dart';
 import 'package:lms/features/auth/presentation/pages/onboarding_page.dart';
+import 'package:lms/features/auth/presentation/pages/login_page.dart';
 
 class AppRouter {
   static const String splash = '/splash';
   static const String onboarding = '/onboarding';
+  static const String login = '/login';
   static const String home = '/home';
   static const String initial = '/';
 
@@ -35,6 +37,19 @@ class AppRouter {
         pageBuilder: (context, state) => CustomTransitionPage(
           key: state.pageKey,
           child: const OnboardingPage(),
+          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+            return FadeTransition(
+              opacity: animation,
+              child: child,
+            );
+          },
+        ),
+      ),
+      GoRoute(
+        path: login,
+        pageBuilder: (context, state) => CustomTransitionPage(
+          key: state.pageKey,
+          child: const LoginPage(),
           transitionsBuilder: (context, animation, secondaryAnimation, child) {
             return FadeTransition(
               opacity: animation,

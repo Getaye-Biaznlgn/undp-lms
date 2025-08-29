@@ -32,7 +32,15 @@ class NavigationService {
     go(AppRouter.home);
   }
 
+  static void goToLogin() {
+    go(AppRouter.login);
+  }
+
   static void pushHome({Object? extra}) {
     push(AppRouter.home, extra: extra);
+  }
+
+  static void pushLogin({Object? extra}) {
+    push(AppRouter.login, extra: extra);
   }
 }

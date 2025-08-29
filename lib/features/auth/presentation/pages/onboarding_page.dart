@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lms/core/theme/app_theme.dart';
 import 'package:lms/core/router/app_router.dart';
+import 'package:lms/core/constants/app_images.dart';
+import 'package:lms/core/widgets/common_button.dart';
 import 'package:lms/features/auth/domain/entities/onboarding_slide.dart';
 
 class OnboardingPage extends StatefulWidget {
@@ -18,31 +20,24 @@ class _OnboardingPageState extends State<OnboardingPage> {
   final List<OnboardingSlide> _slides = [
     const OnboardingSlide(
       id: '1',
-      title: 'Welcome to UNDP LMS',
-      description: 'Your gateway to sustainable development learning and professional growth.',
-      icon: Icons.school,
+      title: 'Welcome to UNDP',
+      description: 'Discover a world of knowledge and unlock your potential with our curated courses.',
+      imageUrl: AppImages.image1,
       color: AppTheme.primaryColor,
     ),
     const OnboardingSlide(
       id: '2',
-      title: 'Expert-Led Courses',
-      description: 'Learn from industry experts and UNDP professionals with real-world experience.',
-      icon: Icons.people,
+      title: 'Learn at Your Pace',
+      description: 'Access courses anytime, anywhere, and track your progress as you grow.',
+      imageUrl: AppImages.image2,
       color: AppTheme.secondaryColor,
     ),
     const OnboardingSlide(
       id: '3',
-      title: 'Track Your Progress',
-      description: 'Monitor your learning journey with detailed progress tracking and achievements.',
-      icon: Icons.trending_up,
+      title: 'Showcase Your Skills',
+      description: 'Complete courses to earn certificates and take your career to new heights.',
+      imageUrl: AppImages.image3,
       color: AppTheme.accentColor,
-    ),
-    const OnboardingSlide(
-      id: '4',
-      title: 'Join the Community',
-      description: 'Connect with learners worldwide and share knowledge for sustainable development.',
-      icon: Icons.group,
-      color: AppTheme.primaryColor,
     ),
   ];
 
@@ -64,7 +59,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
   }
 
   void _getStarted() {
-    context.go(AppRouter.home);
+    context.go(AppRouter.login);
   }
 
   @override
@@ -81,7 +76,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                 padding: const EdgeInsets.all(16.0),
                 child: TextButton(
                   onPressed: _getStarted,
-                  child: const Text(
+                   child: const Text(
                     'Skip',
                     style: TextStyle(
                       color: AppTheme.textSecondaryColor,
@@ -135,26 +130,12 @@ class _OnboardingPageState extends State<OnboardingPage> {
                   const SizedBox(height: 32),
                   
                   // Next/Get Started button
-                  SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      onPressed: _nextPage,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: _slides[_currentPage].color,
-                        foregroundColor: Colors.white,
-                        padding: const EdgeInsets.symmetric(vertical: 16),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                      ),
-                      child: Text(
-                        _currentPage == _slides.length - 1 ? 'Get Started' : 'Next',
-                        style: const TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ),
+                  CommonButton(
+                    text: _currentPage == _slides.length - 1 ? 'Get Started' : 'Next',
+                    onPressed: _nextPage,
+                    type: ButtonType.primary,
+                    size: ButtonSize.large,
+                    customColor: _slides[_currentPage].color,
                   ),
                 ],
               ),
@@ -171,18 +152,23 @@ class _OnboardingPageState extends State<OnboardingPage> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          // Icon
+          // Image
           Container(
-            width: 120,
-            height: 120,
+            width: 280,
+            height: 200,
             decoration: BoxDecoration(
-              color: slide.color.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(60),
+              borderRadius: BorderRadius.circular(16),
+        
             ),
-            child: Icon(
-              slide.icon,
-              size: 60,
-              color: slide.color,
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(16),
+              child:  Image.asset(
+                      slide.imageUrl!,
+                      fit: BoxFit.cover,
+                      width: double.infinity,
+                      height: double.infinity,
+                    )
+                  
             ),
           ),
           
