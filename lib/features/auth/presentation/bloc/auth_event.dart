@@ -10,3 +10,11 @@ class LoginEvent extends AuthEvent {
   @override
   List<Object?> get props => [request];
 }
+
+class SignupEvent extends AuthEvent {
+  final Map<String, dynamic> request;
+  SignupEvent(this.request);
+
+  @override
+  List<Object?> get props => [request];
+}

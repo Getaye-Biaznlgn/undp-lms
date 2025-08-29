@@ -4,11 +4,13 @@ import 'package:lms/features/main/presentation/pages/main_page.dart';
 import 'package:lms/features/auth/presentation/pages/splash_page.dart';
 import 'package:lms/features/auth/presentation/pages/onboarding_page.dart';
 import 'package:lms/features/auth/presentation/pages/login_page.dart';
+import 'package:lms/features/auth/presentation/pages/signup_page.dart';
 
 class AppRouter {
   static const String splash = '/splash';
   static const String onboarding = '/onboarding';
   static const String login = '/login';
+  static const String signup = '/signup';
   static const String home = '/home';
   static const String initial = '/';
 
@@ -50,6 +52,19 @@ class AppRouter {
         pageBuilder: (context, state) => CustomTransitionPage(
           key: state.pageKey,
           child: const LoginPage(),
+          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+            return FadeTransition(
+              opacity: animation,
+              child: child,
+            );
+          },
+        ),
+      ),
+      GoRoute(
+        path: signup,
+        pageBuilder: (context, state) => CustomTransitionPage(
+          key: state.pageKey,
+          child: const SignupPage(),
           transitionsBuilder: (context, animation, secondaryAnimation, child) {
             return FadeTransition(
               opacity: animation,

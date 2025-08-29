@@ -3,6 +3,7 @@ class ApiRoutes{
      static const String apiUrl = "https://front.dololoet.com/api";
      static const String todos="/todos";
      static const String register="/register";
+     static const String signup="/register";
      static const String login="/login";
      static const String forgetPassword="/forget-password";
      static const String resetPassword="/reset-password";

@@ -4,4 +4,5 @@ import 'package:dartz/dartz.dart';
 
 abstract class AuthRepository {
   Future<Either<Failure, LoginResponse>> login(Map<String, dynamic> request);
+  Future<Either<Failure, LoginResponse>> signup(Map<String, dynamic> request);
 }

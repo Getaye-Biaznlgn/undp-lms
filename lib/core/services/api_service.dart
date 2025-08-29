@@ -118,7 +118,7 @@ class ApiService {
           return NetworkResponse.error(e.response?.data['message']);
         case 500:
           // Logger().e(e.response?.data['message']);
-          return NetworkResponse.error(errorMessage);
+          return NetworkResponse.error( e.response?.data['message'] ?? errorMessage);
         
       }
     

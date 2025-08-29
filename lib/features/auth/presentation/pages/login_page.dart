@@ -80,7 +80,7 @@ class _LoginPageState extends State<LoginPage> {
                   Text(
                     'Login',
                     style: TextStyle(
-                      fontSize: 32.sp,
+                      fontSize: 24.sp,
                       fontWeight: FontWeight.bold,
                       color: AppTheme.textPrimaryColor,
                     ),
@@ -248,9 +248,9 @@ class _LoginPageState extends State<LoginPage> {
                         children: [
                           WidgetSpan(
                             child: GestureDetector(
-                              onTap: () {
-                                // TODO: Navigate to register
-                              },
+                                                             onTap: () {
+                                 context.push(AppRouter.signup);
+                               },
                               child: Text(
                                 'Register',
                                 style: TextStyle(
