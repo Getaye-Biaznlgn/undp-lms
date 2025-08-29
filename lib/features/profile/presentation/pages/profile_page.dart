@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:lms/core/router/app_router.dart';
 import 'package:lms/core/theme/app_theme.dart';
+import 'package:lms/core/widgets/common_button.dart';
 
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});
@@ -12,7 +15,7 @@ class ProfilePage extends StatelessWidget {
         backgroundColor: AppTheme.primaryColor,
         foregroundColor: Colors.white,
       ),
-      body: const Center(
+      body:  Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -41,6 +44,12 @@ class ProfilePage extends StatelessWidget {
                 fontSize: 16,
                 color: AppTheme.textSecondaryColor,
               ),
+            ),
+            CommonButton(
+              text: 'Logout',
+              onPressed: () {
+                context.go(AppRouter.login);
+              },
             ),
           ],
         ),

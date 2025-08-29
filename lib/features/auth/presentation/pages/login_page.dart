@@ -6,6 +6,7 @@ import 'package:lms/core/constants/app_images.dart';
 import 'package:lms/core/theme/app_theme.dart';
 import 'package:lms/core/router/app_router.dart';
 import 'package:lms/core/widgets/common_button.dart';
+import 'package:lms/core/widgets/common_text_field.dart';
 import 'package:lms/features/auth/presentation/bloc/auth_bloc.dart';
 
 class LoginPage extends StatefulWidget {
@@ -108,9 +109,12 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                   ),
                   SizedBox(height: 8.h),
-                  TextFormField(
+                  CommonTextField(
+                    hintText: 'Enter your email',
                     controller: _emailController,
                     keyboardType: TextInputType.emailAddress,
+                    type: TextFieldType.filled,
+                    size: TextFieldSize.large,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'Please enter your email';
@@ -122,23 +126,6 @@ class _LoginPageState extends State<LoginPage> {
                       }
                       return null;
                     },
-                    decoration: InputDecoration(
-                      hintText: 'Enter your email',
-                      hintStyle: TextStyle(
-                        color: AppTheme.textSecondaryColor,
-                        fontSize: 16.sp,
-                      ),
-                      filled: true,
-                      fillColor: Colors.white,
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12.r),
-                        borderSide: BorderSide.none,
-                      ),
-                      contentPadding: EdgeInsets.symmetric(
-                        horizontal: 16.w,
-                        vertical: 16.h,
-                      ),
-                    ),
                   ),
 
                   SizedBox(height: 24.h),
@@ -153,51 +140,26 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                   ),
                   SizedBox(height: 8.h),
-                  TextFormField(
+                  CommonTextField(
+                    hintText: 'Enter password',
                     controller: _passwordController,
                     obscureText: _obscurePassword,
+                    type: TextFieldType.filled,
+                    size: TextFieldSize.large,
+                    onObscureToggle: () {
+                      setState(() {
+                        _obscurePassword = !_obscurePassword;
+                      });
+                    },
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'Please enter your password';
                       }
-                      if (value.length < 4) {
-                        return 'Password must be at least 4 characters';
-                      }
                       return null;
                     },
-                    decoration: InputDecoration(
-                      hintText: 'Enter password',
-                      hintStyle: TextStyle(
-                        color: AppTheme.textSecondaryColor,
-                        fontSize: 16.sp,
-                      ),
-                      filled: true,
-                      fillColor: Colors.white,
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12.r),
-                        borderSide: BorderSide.none,
-                      ),
-                      contentPadding: EdgeInsets.symmetric(
-                        horizontal: 16.w,
-                        vertical: 16.h,
-                      ),
-                      suffixIcon: IconButton(
-                        onPressed: () {
-                          setState(() {
-                            _obscurePassword = !_obscurePassword;
-                          });
-                        },
-                        icon: Icon(
-                          _obscurePassword
-                              ? Icons.visibility
-                              : Icons.visibility_off,
-                          color: AppTheme.textSecondaryColor,
-                        ),
-                      ),
-                    ),
                   ),
 
-                  SizedBox(height: 16.h),
+                  SizedBox(height: 8.h),
 
                   // Forgot Password
                   Align(
