@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:lms/core/services/localstorage_service.dart';
 import 'package:lms/core/theme/app_theme.dart';
-import 'package:lms/core/router/navigation_service.dart';
 import 'package:lms/core/router/app_router.dart';
 
 class SplashPage extends StatefulWidget {
@@ -45,7 +45,14 @@ class _SplashPageState extends State<SplashPage>
 
     // Navigate to onboarding after 3 seconds
     Future.delayed(const Duration(seconds: 3), () {
+     String? token = AppPreferences().getToken();
+     String? userId = AppPreferences().getUserId();
+     if(token != null && userId != null){
+      context.go(AppRouter.home);
+     }else{
       context.go(AppRouter.onboarding);
+     }
+     
     });
   }
 

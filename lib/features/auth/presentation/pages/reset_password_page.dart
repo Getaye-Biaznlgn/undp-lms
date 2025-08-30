@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lms/core/router/app_router.dart';
 import 'package:lms/core/theme/app_theme.dart';
+import 'package:lms/core/utils/snackbar_utils.dart';
 import 'package:lms/core/widgets/common_button.dart';
 import 'package:lms/core/widgets/common_text_field.dart';
 import 'package:lms/features/auth/presentation/bloc/auth_bloc.dart';
@@ -50,25 +51,15 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
     return Scaffold(
       body: SafeArea(
         child: BlocListener<AuthBloc, AuthState>(
-          listener: (context, state) {
-            if (state is AuthSuccessState) {
-              // Show success message and navigate to login
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text('Password reset successfully'),
-                  backgroundColor: Colors.green,
-                ),
-              );
-              context.go(AppRouter.login);
-            } else if (state is AuthErrorState) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(state.message),
-                  backgroundColor: Colors.red,
-                ),
-              );
-            }
-          },
+                     listener: (context, state) {
+             if (state is AuthSuccessState) {
+               // Show success message and navigate to login
+               SnackbarUtils.showSuccess(context, 'Password reset successfully');
+               context.go(AppRouter.login);
+             } else if (state is AuthErrorState) {
+               SnackbarUtils.showError(context, state.message);
+             }
+           },
           child: SingleChildScrollView(
             padding: EdgeInsets.all(24.w),
             child: Form(

@@ -1,5 +1,6 @@
 import 'package:lms/core/constants/app_strings.dart';
 import 'package:lms/core/error/failures.dart';
+import 'package:lms/core/services/localstorage_service.dart';
 import 'package:lms/features/auth/data/datasources/auth_data_source.dart';
 import 'package:lms/features/auth/data/models/login_response_model.dart';
 import 'package:lms/features/auth/domain/entities/login_response.dart';
@@ -20,6 +21,11 @@ class AuthRepositoryImpl implements AuthRepository {
       final response = await authDataSource.login(request);
       
       if (response.success) {
+        AppPreferences().saveToken(response.data['bearer_token']);
+        AppPreferences().saveUserId(response.data['user_id'].toString());
+      
+        Logger().i("Token = ${response.data['bearer_token']}");
+        Logger().i("User ID = ${response.data['user_id']}");
         return Right(LoginResponseModel.fromJson(response.data));
       } else {
         return Left(ServerFailure(message: response.error ?? ''));

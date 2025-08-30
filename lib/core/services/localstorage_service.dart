@@ -19,16 +19,16 @@ class AppPreferences {
     return _prefs!.setString(key, value);
   }
   // save user type
-  Future<bool> saveUserType(String userType) async {
-    return _prefs!.setString('userType', userType);
+  Future<bool> saveUserId(String userId) async {
+    return _prefs!.setString('userId', userId);
   }
   //read user type
-  String? getUserType() {
-    return _prefs!.getString('userType');
+  String? getUserId() {
+    return _prefs!.getString('userId');
   }
   //delete user type
-  Future<bool> deleteUserType() async {
-    return _prefs!.remove('userType');
+  Future<bool> deleteUserId() async {
+    return _prefs!.remove('userId');
   }
   //save token
   Future<bool> saveToken(String token) async {
@@ -63,7 +63,7 @@ class AppPreferences {
     return _prefs!.remove(key);
   }
   Future<bool> clear() async{
-    deleteUserType();
+    deleteUserId();
     deleteToken();
   return   _prefs!.clear();
   }

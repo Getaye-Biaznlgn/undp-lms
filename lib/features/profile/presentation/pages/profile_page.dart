@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lms/core/router/app_router.dart';
+import 'package:lms/core/services/localstorage_service.dart';
 import 'package:lms/core/theme/app_theme.dart';
 import 'package:lms/core/widgets/common_button.dart';
 
@@ -48,6 +49,7 @@ class ProfilePage extends StatelessWidget {
             CommonButton(
               text: 'Logout',
               onPressed: () {
+                AppPreferences().clear();
                 context.go(AppRouter.login);
               },
             ),
