@@ -15,6 +15,12 @@ import 'package:lms/features/auth/domain/usecases/signup_usecase.dart';
 import 'package:lms/features/auth/domain/usecases/forgot_password_usecase.dart';
 import 'package:lms/features/auth/domain/usecases/reset_password_usecase.dart';
 import 'package:lms/features/auth/presentation/bloc/auth_bloc.dart';
+import 'package:lms/features/home/data/datasources/home_data_source.dart';
+import 'package:lms/features/home/data/repositories/home_repository.dart';
+import 'package:lms/features/home/domain/repositories/home_repository.dart';
+import 'package:lms/features/home/domain/usecases/get_popular_courses_usecase.dart';
+import 'package:lms/features/home/domain/usecases/get_fresh_courses_usecase.dart';
+import 'package:lms/features/home/presentation/bloc/home_bloc.dart';
 import 'package:get_it/get_it.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
 
@@ -37,6 +43,12 @@ Future<void> init() async {
       resetPasswordUseCase: sl(),
     ),
   );
+  sl.registerLazySingleton(
+    () => HomeBloc(
+      getPopularCoursesUseCase: sl(),
+      getFreshCoursesUseCase: sl(),
+    ),
+  );
 
   // Use cases
   sl.registerLazySingleton(() => GetTodo(sl()));
@@ -45,6 +57,8 @@ Future<void> init() async {
   sl.registerLazySingleton(() => SignupUseCase(sl()));
   sl.registerLazySingleton(() => ForgotPasswordUseCase(sl()));
   sl.registerLazySingleton(() => ResetPasswordUseCase(sl()));
+  sl.registerLazySingleton(() => GetPopularCoursesUseCase(repository: sl()));
+  sl.registerLazySingleton(() => GetFreshCoursesUseCase(repository: sl()));
 
   // Repository
   sl.registerLazySingleton<TodoRepository>(
@@ -57,6 +71,11 @@ Future<void> init() async {
       authDataSource: sl(),
     ),
   );
+  sl.registerLazySingleton<HomeRepository>(
+    () => HomeRepositoryImpl(
+      dataSource: sl(),
+    ),
+  );
 
   // Data sources
   sl.registerLazySingleton<TodoDataSource>(
@@ -65,9 +84,12 @@ Future<void> init() async {
   sl.registerLazySingleton<AuthDataSource>(
     () => AuthDataSourceImpl(),
   );
+  sl.registerLazySingleton<HomeDataSource>(
+    () => HomeDataSourceImpl(),
+  );
 
   //! Core
-   sl.registerLazySingleton(() => InternetConnectionChecker.createInstance());
-  sl.registerLazySingleton<NetworkInfo>(() => NetworkInfoImpl(sl()));
- sl.registerLazySingleton<ApiService>(() => ApiService());
+sl.registerLazySingleton(() => InternetConnectionChecker.createInstance());
+sl.registerLazySingleton<NetworkInfo>(() => NetworkInfoImpl(sl()));
+sl.registerLazySingleton<ApiService>(() => ApiService());
 }

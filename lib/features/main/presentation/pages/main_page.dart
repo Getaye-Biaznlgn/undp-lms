@@ -4,9 +4,11 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:lms/core/theme/app_theme.dart';
 import 'package:lms/features/main/presentation/bloc/main_bloc.dart';
 import 'package:lms/features/home/presentation/pages/home_page.dart';
+import 'package:lms/features/home/presentation/bloc/home_bloc.dart';
 import 'package:lms/features/courses/presentation/pages/courses_page.dart';
 import 'package:lms/features/saved/presentation/pages/saved_page.dart';
 import 'package:lms/features/profile/presentation/pages/profile_page.dart';
+import 'package:lms/dependency_injection.dart';
 
 class MainPage extends StatelessWidget {
   const MainPage({super.key});
@@ -30,11 +32,14 @@ class MainView extends StatelessWidget {
         return Scaffold(
           body: IndexedStack(
             index: state.selectedIndex,
-            children: const [
-              HomePage(),
-              CoursesPage(),
-              SavedPage(),
-              ProfilePage(),
+            children: [
+              BlocProvider(
+                create: (context) => sl<HomeBloc>(),
+                child: const HomePage(),
+              ),
+              const CoursesPage(),
+              const SavedPage(),
+              const ProfilePage(),
             ],
           ),
           bottomNavigationBar: BottomNavigationBar(

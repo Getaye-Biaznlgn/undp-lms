@@ -1,46 +1,333 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:lms/core/theme/app_theme.dart';
+import 'package:lms/features/home/presentation/bloc/home_bloc.dart';
+import 'package:lms/features/home/presentation/widgets/popular_lessons_section.dart';
+import 'package:lms/features/home/presentation/widgets/fresh_courses_section.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   const HomePage({super.key});
+
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  @override
+  void initState() {
+    super.initState();
+    // Fetch popular courses when page loads
+        context.read<HomeBloc>().add(GetPopularCoursesEvent());
+        context.read<HomeBloc>().add(GetFreshCoursesEvent());
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Home'),
-        backgroundColor: AppTheme.primaryColor,
-        foregroundColor: Colors.white,
+      backgroundColor: AppTheme.backgroundColor,
+      body: SafeArea(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Header Section with Greeting and Notification
+              _buildHeader(),
+              const SizedBox(height: 24),
+              
+              // Search and Filter Section (commented out as requested)
+              // _buildSearchSection(),
+              // const SizedBox(height: 24),
+              
+              // Discover Top Picks Banner
+              _buildTopPicksBanner(context),
+              const SizedBox(height: 32),
+              
+               // Popular Lessons Section
+               const PopularLessonsSection(),
+               const SizedBox(height: 24),
+               
+               // Fresh Courses Section
+               const FreshCoursesSection(),
+            ],
+          ),
+        ),
       ),
-      body: const Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+    );
+  }
+
+  Widget _buildHeader() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Icon(
-              Icons.home,
-              size: 64,
-              color: AppTheme.primaryColor,
-            ),
-            SizedBox(height: 16),
             Text(
-              'Welcome to UNDP LMS',
-              style: TextStyle(
-                fontSize: 24,
+              'Hi, Chirley',
+              style: AppTheme.headlineSmall.copyWith(
                 fontWeight: FontWeight.bold,
                 color: AppTheme.textPrimaryColor,
               ),
             ),
-            SizedBox(height: 8),
+            const SizedBox(height: 4),
             Text(
-              'Your learning journey starts here',
-              style: TextStyle(
-                fontSize: 16,
+              'Find your lessons today!',
+              style: AppTheme.bodyMedium.copyWith(
                 color: AppTheme.textSecondaryColor,
               ),
             ),
           ],
         ),
+        Stack(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(12),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.05),
+                    blurRadius: 10,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
+              ),
+              child: const Icon(
+                Icons.notifications_outlined,
+                color: AppTheme.textSecondaryColor,
+                size: 24,
+              ),
+            ),
+            Positioned(
+              top: 8,
+              right: 8,
+              child: Container(
+                width: 8,
+                height: 8,
+                decoration: const BoxDecoration(
+                  color: AppTheme.errorColor,
+                  shape: BoxShape.circle,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _buildTopPicksBanner(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(24),
+      decoration: BoxDecoration(
+        gradient: const LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            AppTheme.primaryColor,
+            AppTheme.primaryLightColor,
+            // Light Green
+          ],
+        ),
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: AppTheme.primaryColor.withOpacity(0.3),
+            blurRadius: 20,
+            offset: const Offset(0, 8),
+          ),
+        ],
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Discover Top Picks',
+                  style: AppTheme.bodyMedium.copyWith(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Text(
+                      '+100',
+                      style: AppTheme.headlineLarge.copyWith(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(width: 4),
+                    Text(
+                      'lessons',
+                      style: AppTheme.bodyLarge.copyWith(
+                        color: Colors.white,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 16),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.2),
+                    borderRadius: BorderRadius.circular(25),
+                  ),
+                  child: Text(
+                    'Explore more',
+                    style: AppTheme.labelLarge.copyWith(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: 20),
+          // Miniature previews
+          Stack(
+            children: [
+              // Back preview
+              Container(
+                width: 80,
+                height: 120,
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(0.9),
+                  borderRadius: BorderRadius.circular(12),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.1),
+                      blurRadius: 10,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
+                ),
+                child: Column(
+                  children: [
+                    Container(
+                      height: 40,
+                      decoration: const BoxDecoration(
+                        color: AppTheme.primaryColor,
+                        borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
+                      ),
+                    ),
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Column(
+                          children: [
+                            Container(
+                              height: 20,
+                              decoration: BoxDecoration(
+                                color: AppTheme.backgroundColor,
+                                borderRadius: BorderRadius.circular(4),
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Container(
+                              height: 12,
+                              decoration: BoxDecoration(
+                                color: AppTheme.backgroundColor,
+                                borderRadius: BorderRadius.circular(2),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              // Front preview
+              Positioned(
+                left: 20,
+                top: -10,
+                child: Container(
+                  width: 80,
+                  height: 120,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(12),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.15),
+                        blurRadius: 15,
+                        offset: const Offset(0, 6),
+                      ),
+                    ],
+                  ),
+                  child: Column(
+                    children: [
+                      Container(
+                        height: 40,
+                        decoration: const BoxDecoration(
+                          color: AppTheme.primaryColor,
+                          borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
+                        ),
+                        child: const Center(
+                          child: Text(
+                            'Course',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 10,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                      ),
+                      Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Column(
+                            children: [
+                              Container(
+                                height: 20,
+                                decoration: BoxDecoration(
+                                  color: AppTheme.backgroundColor,
+                                  borderRadius: BorderRadius.circular(4),
+                                ),
+                              ),
+                              const SizedBox(height: 4),
+                              Container(
+                                height: 12,
+                                decoration: BoxDecoration(
+                                  color: AppTheme.backgroundColor,
+                                  borderRadius: BorderRadius.circular(2),
+                                ),
+                              ),
+                              const SizedBox(height: 4),
+                              Container(
+                                height: 12,
+                                decoration: BoxDecoration(
+                                  color: AppTheme.backgroundColor,
+                                  borderRadius: BorderRadius.circular(2),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }
+
+
+
 }
