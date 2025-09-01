@@ -20,7 +20,16 @@ import 'package:lms/features/home/data/repositories/home_repository.dart';
 import 'package:lms/features/home/domain/repositories/home_repository.dart';
 import 'package:lms/features/home/domain/usecases/get_popular_courses_usecase.dart';
 import 'package:lms/features/home/domain/usecases/get_fresh_courses_usecase.dart';
+
 import 'package:lms/features/home/presentation/bloc/home_bloc.dart';
+import 'package:lms/features/courses/data/datasources/courses_data_source.dart';
+import 'package:lms/features/courses/data/repositories/courses_repository_impl.dart';
+import 'package:lms/features/courses/domain/repositories/courses_repository.dart';
+import 'package:lms/features/courses/domain/usecases/get_course_main_categories_usecase.dart';
+import 'package:lms/features/courses/domain/usecases/get_courses_by_category_usecase.dart';
+import 'package:lms/features/courses/domain/usecases/search_courses_usecase.dart';
+import 'package:lms/features/courses/presentation/bloc/category_bloc.dart';
+import 'package:lms/features/courses/presentation/bloc/courses_bloc.dart';
 import 'package:get_it/get_it.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
 
@@ -43,12 +52,24 @@ Future<void> init() async {
       resetPasswordUseCase: sl(),
     ),
   );
-  sl.registerLazySingleton(
-    () => HomeBloc(
-      getPopularCoursesUseCase: sl(),
-      getFreshCoursesUseCase: sl(),
-    ),
-  );
+            sl.registerLazySingleton(
+            () => HomeBloc(
+              getPopularCoursesUseCase: sl(),
+              getFreshCoursesUseCase: sl(),
+            ),
+          );
+          sl.registerLazySingleton(
+            () => CategoryBloc(
+              getCourseMainCategoriesUseCase: sl(),
+            ),
+          );
+          sl.registerLazySingleton(
+            () => CoursesBloc(
+              getPopularCoursesUseCase: sl(),
+              getCoursesByCategoryUseCase: sl(),
+              searchCoursesUseCase: sl(),
+            ),
+          );
 
   // Use cases
   sl.registerLazySingleton(() => GetTodo(sl()));
@@ -57,8 +78,11 @@ Future<void> init() async {
   sl.registerLazySingleton(() => SignupUseCase(sl()));
   sl.registerLazySingleton(() => ForgotPasswordUseCase(sl()));
   sl.registerLazySingleton(() => ResetPasswordUseCase(sl()));
-  sl.registerLazySingleton(() => GetPopularCoursesUseCase(repository: sl()));
-  sl.registerLazySingleton(() => GetFreshCoursesUseCase(repository: sl()));
+            sl.registerLazySingleton(() => GetPopularCoursesUseCase(repository: sl()));
+          sl.registerLazySingleton(() => GetFreshCoursesUseCase(repository: sl()));
+          sl.registerLazySingleton(() => GetCourseMainCategoriesUseCase(repository: sl()));
+          sl.registerLazySingleton(() => GetCoursesByCategoryUseCase(repository: sl()));
+          sl.registerLazySingleton(() => SearchCoursesUseCase(repository: sl()));
 
   // Repository
   sl.registerLazySingleton<TodoRepository>(
@@ -76,6 +100,11 @@ Future<void> init() async {
       dataSource: sl(),
     ),
   );
+  sl.registerLazySingleton<CoursesRepository>(
+    () => CoursesRepositoryImpl(
+      dataSource: sl(),
+    ),
+  );
 
   // Data sources
   sl.registerLazySingleton<TodoDataSource>(
@@ -86,6 +115,9 @@ Future<void> init() async {
   );
   sl.registerLazySingleton<HomeDataSource>(
     () => HomeDataSourceImpl(),
+  );
+  sl.registerLazySingleton<CoursesDataSource>(
+    () => CoursesDataSourceImpl(),
   );
 
   //! Core

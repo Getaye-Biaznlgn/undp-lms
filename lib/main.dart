@@ -8,6 +8,10 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lms/dependency_injection.dart';
 import 'package:lms/features/auth/presentation/bloc/auth_bloc.dart';
+import 'package:lms/features/home/presentation/bloc/home_bloc.dart';
+import 'package:lms/features/courses/presentation/bloc/category_bloc.dart';
+import 'package:lms/features/courses/presentation/bloc/courses_bloc.dart';
+import 'package:lms/features/main/presentation/bloc/main_bloc.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -32,6 +36,18 @@ class MyApp extends StatelessWidget {
           providers: [
             BlocProvider<AuthBloc>(
               create: (context) => sl<AuthBloc>(),
+            ),
+            BlocProvider<HomeBloc>(
+              create: (context) => sl<HomeBloc>(),
+            ),
+            BlocProvider<CategoryBloc>(
+              create: (context) => sl<CategoryBloc>(),
+            ),
+            BlocProvider<CoursesBloc>(
+              create: (context) => sl<CoursesBloc>(),
+            ),
+            BlocProvider<MainBloc>(
+              create: (context) => sl<MainBloc>(),
             ),
           ],
           child: MaterialApp.router(

@@ -4,7 +4,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:lms/core/theme/app_theme.dart';
 import 'package:lms/features/main/presentation/bloc/main_bloc.dart';
 import 'package:lms/features/home/presentation/pages/home_page.dart';
-import 'package:lms/features/home/presentation/bloc/home_bloc.dart';
 import 'package:lms/features/courses/presentation/pages/courses_page.dart';
 import 'package:lms/features/saved/presentation/pages/saved_page.dart';
 import 'package:lms/features/profile/presentation/pages/profile_page.dart';
@@ -15,10 +14,7 @@ class MainPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => MainBloc(),
-      child: const MainView(),
-    );
+    return const MainView();
   }
 }
 
@@ -33,10 +29,7 @@ class MainView extends StatelessWidget {
           body: IndexedStack(
             index: state.selectedIndex,
             children: [
-              BlocProvider(
-                create: (context) => sl<HomeBloc>(),
-                child: const HomePage(),
-              ),
+              const HomePage(),
               const CoursesPage(),
               const SavedPage(),
               const ProfilePage(),
