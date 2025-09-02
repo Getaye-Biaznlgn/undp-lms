@@ -1,18 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:lms/core/theme/app_theme.dart';
+import 'package:lms/features/courses/presentation/bloc/courses_bloc.dart';
 import 'dart:async'; // Added for Timer
 
 class CourseSearchWidget extends StatefulWidget {
-  final Function(String) onSearchChanged;
   final String? initialValue;
   final String hintText;
+  final String? selectedCategory;
 
   const CourseSearchWidget({
     super.key,
-    required this.onSearchChanged,
     this.initialValue,
     this.hintText = 'Search courses...',
+    this.selectedCategory,
   });
 
   @override
@@ -42,13 +44,27 @@ class _CourseSearchWidgetState extends State<CourseSearchWidget> {
     
     // Set new timer for debouncing (300ms delay)
     _debounceTimer = Timer(const Duration(milliseconds: 300), () {
-      widget.onSearchChanged(query);
+      _handleSearch(query);
     });
+  }
+
+  void _handleSearch(String query) {
+    if (query.isEmpty) {
+      // If search is empty, load popular courses or selected category
+      if (widget.selectedCategory != null) {
+        context.read<CoursesBloc>().add(GetCoursesByCategoryEvent(slug: widget.selectedCategory!));
+      } else {
+        context.read<CoursesBloc>().add(GetPopularCoursesEvent());
+      }
+    } else {
+      // Perform search
+      context.read<CoursesBloc>().add(SearchCoursesEvent(query: query));
+    }
   }
 
   void clearSearch() {
     _searchController.clear();
-    widget.onSearchChanged('');
+    _handleSearch('');
   }
 
   @override

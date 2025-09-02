@@ -30,6 +30,11 @@ import 'package:lms/features/courses/domain/usecases/get_courses_by_category_use
 import 'package:lms/features/courses/domain/usecases/search_courses_usecase.dart';
 import 'package:lms/features/courses/presentation/bloc/category_bloc.dart';
 import 'package:lms/features/courses/presentation/bloc/courses_bloc.dart';
+import 'package:lms/features/home/data/datasources/course_detail_data_source.dart';
+import 'package:lms/features/home/data/repositories/course_detail_repository_impl.dart';
+import 'package:lms/features/home/domain/repositories/course_detail_repository.dart';
+import 'package:lms/features/home/domain/usecases/get_course_details_usecase.dart';
+import 'package:lms/features/home/presentation/bloc/course_detail_bloc.dart';
 import 'package:get_it/get_it.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
 
@@ -70,6 +75,11 @@ Future<void> init() async {
               searchCoursesUseCase: sl(),
             ),
           );
+          sl.registerLazySingleton(
+            () => CourseDetailBloc(
+              getCourseDetailsUseCase: sl(),
+            ),
+          );
 
   // Use cases
   sl.registerLazySingleton(() => GetTodo(sl()));
@@ -83,6 +93,7 @@ Future<void> init() async {
           sl.registerLazySingleton(() => GetCourseMainCategoriesUseCase(repository: sl()));
           sl.registerLazySingleton(() => GetCoursesByCategoryUseCase(repository: sl()));
           sl.registerLazySingleton(() => SearchCoursesUseCase(repository: sl()));
+          sl.registerLazySingleton(() => GetCourseDetailsUseCase(repository: sl()));
 
   // Repository
   sl.registerLazySingleton<TodoRepository>(
@@ -105,6 +116,11 @@ Future<void> init() async {
       dataSource: sl(),
     ),
   );
+  sl.registerLazySingleton<CourseDetailRepository>(
+    () => CourseDetailRepositoryImpl(
+      dataSource: sl(),
+    ),
+  );
 
   // Data sources
   sl.registerLazySingleton<TodoDataSource>(
@@ -118,6 +134,9 @@ Future<void> init() async {
   );
   sl.registerLazySingleton<CoursesDataSource>(
     () => CoursesDataSourceImpl(),
+  );
+  sl.registerLazySingleton<CourseDetailDataSource>(
+    () => CourseDetailDataSourceImpl(),
   );
 
   //! Core

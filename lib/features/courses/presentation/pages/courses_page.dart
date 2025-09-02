@@ -3,12 +3,13 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:lms/core/theme/app_theme.dart';
 import 'package:lms/core/widgets/retry_button.dart';
+import 'package:lms/core/widgets/course_list_skeleton.dart';
 import 'package:lms/features/courses/presentation/bloc/category_bloc.dart';
 import 'package:lms/features/courses/presentation/bloc/courses_bloc.dart';
 import 'package:lms/features/courses/presentation/widgets/category_filter.dart';
 import 'package:lms/features/courses/presentation/widgets/course_list_item.dart';
 import 'package:lms/features/courses/presentation/widgets/course_search_widget.dart';
-import 'package:lms/features/home/data/models/course_model.dart';
+import 'package:lms/features/home/presentation/pages/course_detail_page.dart';
 
 class CoursesPage extends StatefulWidget {
   const CoursesPage({super.key});
@@ -45,23 +46,7 @@ class _CoursesPageState extends State<CoursesPage> {
     }
   }
 
-  void _onSearchChanged(String query) {
-    setState(() {
-      _searchQuery = query;
-    });
-    
-    if (query.isEmpty) {
-      // If search is empty, load popular courses or selected category
-      if (selectedCategory != null) {
-        context.read<CoursesBloc>().add(GetCoursesByCategoryEvent(slug: selectedCategory!));
-      } else {
-        context.read<CoursesBloc>().add(GetPopularCoursesEvent());
-      }
-    } else {
-      // Perform search
-      context.read<CoursesBloc>().add(SearchCoursesEvent(query: query));
-    }
-  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -85,8 +70,8 @@ class _CoursesPageState extends State<CoursesPage> {
         children: [
           // Search Section
           CourseSearchWidget(
-            onSearchChanged: _onSearchChanged,
             initialValue: _searchQuery,
+            selectedCategory: selectedCategory,
           ),
           // Category Filter Section
           Container(
@@ -112,8 +97,7 @@ class _CoursesPageState extends State<CoursesPage> {
                   );
                 } else if (state is CategoryErrorState) {
                   return ErrorRetryWidget(
-                    title: 'Failed to load categories',
-                    description: state.message,
+                    title: state.message,
                     onRetry: () {
                       context.read<CategoryBloc>().add(GetCategoriesEvent());
                     },
@@ -132,12 +116,12 @@ class _CoursesPageState extends State<CoursesPage> {
               child: BlocBuilder<CoursesBloc, CoursesState>(
                 builder: (context, state) {
                   if (state is CoursesLoadingState) {
-                    return const LoadingWidget(
-                      message: 'Loading courses...',
+                    return const CourseVerticalListSkeleton(
+                      itemCount: 5,
                     );
                   } else if (state is CoursesLoadedState) {
                     return ListView.builder(
-                      padding: EdgeInsets.only(top: 16.h, bottom: 16.h),
+                      // padding: EdgeInsets.only(top: 16.h, bottom: 16.h),
                       itemCount: state.courses.length,
                       itemBuilder: (context, index) {
                         final course = state.courses[index];
@@ -148,8 +132,15 @@ class _CoursesPageState extends State<CoursesPage> {
                           course: course,
                           isHighlighted: isHighlighted,
                           onTap: () {
-                            // Handle course tap
-                            print('Course tapped: ${course.title}');
+                            // Navigate to course detail page
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => CourseDetailPage(
+                                  courseSlug: course.slug,
+                                ),
+                              ),
+                            );
                           },
                           onFavoriteToggle: () {
                             // Handle favorite toggle
@@ -160,8 +151,7 @@ class _CoursesPageState extends State<CoursesPage> {
                     );
                   } else if (state is CoursesErrorState) {
                     return ErrorRetryWidget(
-                      title: 'Failed to load courses',
-                      description: state.message,
+                      title: state.message,
                       onRetry: () {
                         if (selectedCategory != null) {
                           context.read<CoursesBloc>().add(GetCoursesByCategoryEvent(slug: selectedCategory!));

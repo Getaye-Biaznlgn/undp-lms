@@ -20,18 +20,19 @@ class CourseListItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Size size = MediaQuery.of(context).size;
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        margin: EdgeInsets.only(bottom: 16.h),
-        padding: EdgeInsets.all(16.w),
+        margin: EdgeInsets.only(bottom: 4.h),
+        padding: EdgeInsets.all(8.w),
         decoration: BoxDecoration(
           color: isHighlighted ? AppTheme.primaryColor : Colors.white,
-          borderRadius: BorderRadius.circular(16.r),
+          borderRadius: BorderRadius.circular(8.r),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withOpacity(0.08),
-              blurRadius: 10,
+              blurRadius: 5,
               offset: const Offset(0, 4),
             ),
           ],
@@ -40,8 +41,8 @@ class CourseListItem extends StatelessWidget {
           children: [
             // Course Image
             Container(
-              width: 80.w,
-              height: 80.h,
+              width: size.width * 1/3,
+              height: 90.h,
               decoration: BoxDecoration(
                 color: isHighlighted ? Colors.white.withOpacity(0.2) : Colors.grey.shade100,
                 borderRadius: BorderRadius.circular(12.r),
@@ -76,7 +77,7 @@ class CourseListItem extends StatelessWidget {
                   ),
                   SizedBox(height: 4.h),
                   Text(
-                    '${_getDifficultyLevel()} / ${course.students} lessons',
+                    course.instructor.name,
                     style: AppTheme.bodySmall.copyWith(
                       color: isHighlighted ? Colors.white.withOpacity(0.8) : AppTheme.textSecondaryColor,
                     ),
@@ -99,25 +100,55 @@ class CourseListItem extends StatelessWidget {
                       ),
                       SizedBox(width: 16.w),
                       Text(
-                        _getDuration(),
+                        '${course.students} students',
                         style: AppTheme.bodySmall.copyWith(
                           color: isHighlighted ? Colors.white.withOpacity(0.8) : AppTheme.textSecondaryColor,
                         ),
                       ),
                     ],
                   ),
+                  // SizedBox(height: 8.h),
+                  // Row(
+                  //   children: [
+                  //     if (course.discount > 0) ...[
+                  //       Text(
+                  //         course.price,
+                  //         style: AppTheme.bodySmall.copyWith(
+                  //           color: isHighlighted ? Colors.white.withOpacity(0.6) : AppTheme.textSecondaryColor,
+                  //           decoration: TextDecoration.lineThrough,
+                  //         ),
+                  //       ),
+                  //       SizedBox(width: 8.w),
+                  //       Container(
+                  //         padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 2.h),
+                  //         decoration: BoxDecoration(
+                  //           color: Colors.red,
+                  //           borderRadius: BorderRadius.circular(4.r),
+                  //         ),
+                  //         child: Text(
+                  //           '-${course.discount}%',
+                  //           style: AppTheme.bodySmall.copyWith(
+                  //             color: Colors.white,
+                  //             fontWeight: FontWeight.bold,
+                  //           ),
+                  //         ),
+                  //       ),
+                  //     ] else ...[
+                  //       Text(
+                  //         course.price,
+                  //         style: AppTheme.bodyMedium.copyWith(
+                  //           color: isHighlighted ? Colors.white : AppTheme.primaryColor,
+                  //           fontWeight: FontWeight.bold,
+                  //         ),
+                  //       ),
+                  //     ],
+                  //   ],
+                  // ),
                 ],
               ),
             ),
             // Favorite Icon
-            GestureDetector(
-              onTap: onFavoriteToggle,
-              child: Icon(
-                Icons.favorite,
-                size: 20.w,
-                color: isHighlighted ? Colors.red.shade300 : Colors.grey.shade400,
-              ),
-            ),
+           
           ],
         ),
       ),
@@ -130,20 +161,6 @@ class CourseListItem extends StatelessWidget {
       size: 32.w,
       color: Colors.grey.shade400,
     );
-  }
-
-  String _getDifficultyLevel() {
-    // This could be enhanced based on actual course data
-    if (course.students > 40) return 'Advanced';
-    if (course.students > 20) return 'Intermediate';
-    return 'Beginner';
-  }
-
-  String _getDuration() {
-    // This could be enhanced based on actual course data
-    final hours = (course.averageRating * 1.5).round();
-    final minutes = (course.averageRating * 30).round() % 60;
-    return '${hours}h ${minutes}min';
   }
 }
 

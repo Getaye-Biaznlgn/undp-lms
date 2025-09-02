@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:lms/core/theme/app_theme.dart';
 import 'package:lms/core/widgets/skeleton_loader.dart';
+import 'package:lms/core/widgets/course_list_skeleton.dart';
 
 class RetryButton extends StatelessWidget {
   final String title;
-  final String? description;
   final VoidCallback onRetry;
   final IconData? icon;
   final double? height;
@@ -13,7 +13,6 @@ class RetryButton extends StatelessWidget {
   const RetryButton({
     super.key,
     required this.title,
-    this.description,
     required this.onRetry,
     this.icon,
     this.height,
@@ -44,19 +43,7 @@ class RetryButton extends StatelessWidget {
               ),
               textAlign: TextAlign.center,
             ),
-            if (description != null) ...[
-              const SizedBox(height: 8),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 24),
-                child: Text(
-                  description!,
-                  style: AppTheme.bodyMedium.copyWith(
-                    color: AppTheme.textSecondaryColor,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-              ),
-            ],
+           
             const SizedBox(height: 16),
             ElevatedButton(
               onPressed: onRetry,
@@ -97,14 +84,12 @@ class RetryButton extends StatelessWidget {
 // Convenience widget for common error states
 class ErrorRetryWidget extends StatelessWidget {
   final String title;
-  final String? description;
   final VoidCallback onRetry;
   final double? height;
 
   const ErrorRetryWidget({
     super.key,
     required this.title,
-    this.description,
     required this.onRetry,
     this.height,
   });
@@ -113,7 +98,6 @@ class ErrorRetryWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return RetryButton(
       title: title,
-      description: description,
       onRetry: onRetry,
       height: height,
       icon: Icons.error_outline,

@@ -53,8 +53,7 @@ class PopularLessonsSection extends StatelessWidget {
               );
             } else if (state is HomeErrorState) {
               return ErrorRetryWidget(
-                title: 'Failed to load courses',
-                description: state.message,
+                title: state.message,
                 onRetry: () {
                   context.read<HomeBloc>().add(GetPopularCoursesEvent());
                 },
