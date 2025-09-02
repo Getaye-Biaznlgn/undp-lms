@@ -19,7 +19,7 @@ class CourseVerticalListSkeleton extends StatelessWidget {
     return SizedBox(
       height: height,
       child: ListView.builder(
-        padding: padding ?? EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
+        padding: padding ?? EdgeInsets.symmetric(horizontal: 8.w, vertical: 16.h),
         itemCount: itemCount,
         itemBuilder: (context, index) {
           return Padding(

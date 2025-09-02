@@ -9,7 +9,7 @@ class CourseCard extends StatelessWidget {
   final Color imageColor;
   final bool isFavorite;
   final String duration;
-  final VoidCallback? onTap;
+  final Function(CourseModel)? onTap;
   final VoidCallback? onFavoriteToggle;
 
   const CourseCard({
@@ -26,7 +26,7 @@ class CourseCard extends StatelessWidget {
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return GestureDetector(
-      onTap: onTap,
+      onTap: onTap != null ? () => onTap!(course) : null,
       child: Container(
         width: size.width * 0.5,
         decoration: BoxDecoration(
@@ -186,7 +186,7 @@ class CourseCard extends StatelessWidget {
 class CourseCardList extends StatelessWidget {
   final List<CourseModel> courses;
   final double height;
-  final VoidCallback? onCourseTap;
+  final Function(CourseModel)? onCourseTap;
   final VoidCallback? onFavoriteToggle;
 
   const CourseCardList({
@@ -216,7 +216,7 @@ class CourseCardList extends StatelessWidget {
               imageColor: _getColorForCourse(index),
               isFavorite: false,
               duration: '6h 30min',
-              onTap: onCourseTap,
+              onTap: onCourseTap != null ? (course) => onCourseTap!(course) : null,
               onFavoriteToggle: onFavoriteToggle,
             ),
           );

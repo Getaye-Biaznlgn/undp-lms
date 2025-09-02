@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
 import 'package:lms/core/theme/app_theme.dart';
 import 'package:lms/core/widgets/retry_button.dart';
 import 'package:lms/core/widgets/course_card.dart';
 import 'package:lms/features/home/presentation/bloc/home_bloc.dart';
+import 'package:lms/core/router/app_router.dart';
 
 class FreshCoursesSection extends StatelessWidget {
   const FreshCoursesSection({super.key});
@@ -45,8 +47,8 @@ class FreshCoursesSection extends StatelessWidget {
               return CourseCardList(
                 courses: context.read<HomeBloc>().freshCourses,
                 height: 280.h,
-                onCourseTap: () {
-                  // Handle course tap
+                onCourseTap: (course) {
+                  context.push('${AppRouter.courseDetail}?slug=${course.slug}');
                 },
                 onFavoriteToggle: () {
                   // Handle favorite toggle

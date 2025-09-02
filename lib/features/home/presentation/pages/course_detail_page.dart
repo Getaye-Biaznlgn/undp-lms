@@ -31,6 +31,21 @@ class _CourseDetailPageState extends State<CourseDetailPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppTheme.backgroundColor,
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        centerTitle: false,
+        title: Text(
+          'Course Detail',
+          style: AppTheme.titleLarge.copyWith(
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () => Navigator.pop(context),
+        ),
+      ),
       body: BlocBuilder<CourseDetailBloc, CourseDetailState>(
         builder: (context, state) {
           if (state is CourseDetailLoadingState) {
@@ -40,65 +55,30 @@ class _CourseDetailPageState extends State<CourseDetailPage> {
               ),
             );
           } else if (state is CourseDetailLoadedState) {
-            return CustomScrollView(
-              slivers: [
-                // Fixed Video Header Section
-                SliverToBoxAdapter(
-                  child: SizedBox(
-                    height: 250.h,
-                    child: Stack(
+            return Column(
+              children: [
+                // Video Header Section (Part of body, not sliver)
+                SizedBox(
+                  height: 250.h,
+                  child: CourseDetailHeader(
+                    courseDetail: state.courseDetail,
+                  ),
+                ),
+                // Scrollable Content Below Video
+                Expanded(
+                  child: SingleChildScrollView(
+                    child: Column(
                       children: [
-                        // Video Header
-                        CourseDetailHeader(
+                        // Course Info Section
+                        CourseDetailInfo(
                           courseDetail: state.courseDetail,
                         ),
-                        // App Bar overlay
-                        Positioned(
-                          top: 0,
-                          left: 0,
-                          right: 0,
-                          child: Container(
-                            padding: EdgeInsets.only(
-                              top: MediaQuery.of(context).padding.top + 8.h,
-                              left: 8.w,
-                              right: 8.w,
-                            ),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                IconButton(
-                                  icon: const Icon(Icons.arrow_back, color: Colors.white),
-                                  onPressed: () => Navigator.pop(context),
-                                ),
-                                IconButton(
-                                  icon: Icon(
-                                    state.courseDetail.isWishlist 
-                                      ? Icons.favorite 
-                                      : Icons.favorite_border,
-                                    color: Colors.white,
-                                  ),
-                                  onPressed: () {
-                                    // TODO: Implement wishlist toggle
-                                  },
-                                ),
-                              ],
-                            ),
-                          ),
+                        // Tabs Section
+                        CourseDetailTabs(
+                          courseDetail: state.courseDetail,
                         ),
                       ],
                     ),
-                  ),
-                ),
-                // Course Info Section
-                SliverToBoxAdapter(
-                  child: CourseDetailInfo(
-                    courseDetail: state.courseDetail,
-                  ),
-                ),
-                // Tabs Section
-                SliverToBoxAdapter(
-                  child: CourseDetailTabs(
-                    courseDetail: state.courseDetail,
                   ),
                 ),
               ],

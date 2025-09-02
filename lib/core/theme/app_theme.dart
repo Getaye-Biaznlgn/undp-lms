@@ -189,17 +189,17 @@ class AppTheme {
       // App Bar Theme
       appBarTheme: const AppBarTheme(
         backgroundColor: primaryColor,
-        foregroundColor: Colors.white,
+        foregroundColor: Colors.black,
         elevation: 0,
         scrolledUnderElevation: 2,
         centerTitle: true,
         titleTextStyle: TextStyle(
           fontSize: 20,
           fontWeight: FontWeight.w600,
-          color: Colors.white,
+          color: Colors.black,
         ),
-        iconTheme: IconThemeData(color: Colors.white, size: 24),
-        actionsIconTheme: IconThemeData(color: Colors.white, size: 24),
+        iconTheme: IconThemeData(color: Colors.black, size: 24),
+        actionsIconTheme: IconThemeData(color: Colors.black, size: 24),
       ),
       
       // Text Theme

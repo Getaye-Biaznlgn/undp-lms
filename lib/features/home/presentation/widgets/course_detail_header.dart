@@ -218,36 +218,7 @@ class _CourseDetailHeaderState extends State<CourseDetailHeader> {
                     ),
                   ),
                   // Company logo overlay (top left)
-                  Positioned(
-                    top: 60.h,
-                    left: 16.w,
-                    child: Container(
-                      padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
-                      decoration: BoxDecoration(
-                        color: Colors.black.withOpacity(0.7),
-                        borderRadius: BorderRadius.circular(8.r),
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(
-                            Icons.school,
-                            color: Colors.white,
-                            size: 16.w,
-                          ),
-                          SizedBox(width: 6.w),
-                          Text(
-                            'LMS',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 12.sp,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
+                 
                 ],
               ),
       ),
