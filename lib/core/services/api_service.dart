@@ -1,4 +1,5 @@
 import 'package:lms/core/constants/app_strings.dart';
+import 'package:lms/core/services/localstorage_service.dart';
 import 'package:lms/core/services/network_response.dart';
 import 'package:lms/core/constants/api_routes.dart';
 import 'package:dio/dio.dart';
@@ -31,11 +32,11 @@ class ApiService {
     dio.interceptors.add(
       InterceptorsWrapper(
         onRequest: (RequestOptions options, RequestInterceptorHandler handler) {
-          //  var token =  AppPreferences().getToken();
-          //  Logger().e("Token = $token");
-          // if(token != null){
-          //    options.headers['Authorization'] = 'Token $token';
-          // }
+           var token =  AppPreferences().getToken();
+           Logger().e("Token = $token");
+          if(token != null){
+             options.headers['Authorization'] = 'Bearer $token';
+          }
           return handler.next(options);
         },
         onResponse: (Response response, ResponseInterceptorHandler handler) {

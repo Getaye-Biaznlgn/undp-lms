@@ -134,57 +134,9 @@ class CourseDetailInfo extends StatelessWidget {
               ),
             ],
           ),
-          SizedBox(height: 24.h),
+          // SizedBox(height: 24.h),
           
-          // Price and Add to Cart
-          Row(
-            children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Price:',
-                      style: AppTheme.bodyMedium.copyWith(
-                        color: AppTheme.textSecondaryColor,
-                      ),
-                    ),
-                    SizedBox(height: 4.h),
-                    Text(
-                      courseDetail.price,
-                      style: AppTheme.headlineSmall.copyWith(
-                        fontWeight: FontWeight.bold,
-                        color: AppTheme.primaryColor,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              SizedBox(width: 16.w),
-              Expanded(
-                child: ElevatedButton(
-                  onPressed: () {
-                    // TODO: Implement add to cart functionality
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppTheme.primaryColor,
-                    foregroundColor: Colors.white,
-                    padding: EdgeInsets.symmetric(vertical: 16.h),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12.r),
-                    ),
-                  ),
-                  child: Text(
-                    'Add to Cart',
-                    style: AppTheme.labelLarge.copyWith(
-                      color: Colors.white,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
+        
         ],
       ),
     );

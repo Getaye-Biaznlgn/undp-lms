@@ -16,4 +16,6 @@ class ApiRoutes{
      
     static const String searchCourses= "/search-courses?search={search}";
     static const String courseDetails="/course/{slug}";
+
+    static const String enrolledCourses="/enrolled-courses";
 }

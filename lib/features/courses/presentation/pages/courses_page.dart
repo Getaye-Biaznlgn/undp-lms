@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:lms/core/theme/app_theme.dart';
 import 'package:lms/core/widgets/retry_button.dart';
 import 'package:lms/core/widgets/course_list_skeleton.dart';
+import 'package:lms/core/widgets/common_app_bar.dart';
 import 'package:lms/features/courses/presentation/bloc/category_bloc.dart';
 import 'package:lms/features/courses/presentation/bloc/courses_bloc.dart';
 import 'package:lms/features/courses/presentation/widgets/category_filter.dart';
@@ -52,19 +53,8 @@ class _CoursesPageState extends State<CoursesPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppTheme.backgroundColor,
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        
-        elevation: 0,
-        title: Text(
-          'Courses',
-          style: AppTheme.titleLarge.copyWith(
-            fontWeight: FontWeight.bold,
-            color: AppTheme.textPrimaryColor,
-          ),
-        ),
-        centerTitle: false,
-
+      appBar: const WhiteAppBar(
+        title: 'Courses',
       ),
       body: Column(
         children: [

@@ -35,6 +35,11 @@ import 'package:lms/features/home/data/repositories/course_detail_repository_imp
 import 'package:lms/features/home/domain/repositories/course_detail_repository.dart';
 import 'package:lms/features/home/domain/usecases/get_course_details_usecase.dart';
 import 'package:lms/features/home/presentation/bloc/course_detail_bloc.dart';
+import 'package:lms/features/saved/data/datasources/enrolled_courses_data_source.dart';
+import 'package:lms/features/saved/data/repositories/enrolled_courses_repository_impl.dart';
+import 'package:lms/features/saved/domain/repositories/enrolled_courses_repository.dart';
+import 'package:lms/features/saved/domain/usecases/get_enrolled_courses_usecase.dart';
+import 'package:lms/features/saved/presentation/bloc/enrolled_courses_bloc.dart';
 import 'package:get_it/get_it.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
 
@@ -80,6 +85,11 @@ Future<void> init() async {
               getCourseDetailsUseCase: sl(),
             ),
           );
+          sl.registerLazySingleton(
+            () => EnrolledCoursesBloc(
+              getEnrolledCoursesUseCase: sl(),
+            ),
+          );
 
   // Use cases
   sl.registerLazySingleton(() => GetTodo(sl()));
@@ -88,12 +98,13 @@ Future<void> init() async {
   sl.registerLazySingleton(() => SignupUseCase(sl()));
   sl.registerLazySingleton(() => ForgotPasswordUseCase(sl()));
   sl.registerLazySingleton(() => ResetPasswordUseCase(sl()));
-            sl.registerLazySingleton(() => GetPopularCoursesUseCase(repository: sl()));
+          sl.registerLazySingleton(() => GetPopularCoursesUseCase(repository: sl()));
           sl.registerLazySingleton(() => GetFreshCoursesUseCase(repository: sl()));
           sl.registerLazySingleton(() => GetCourseMainCategoriesUseCase(repository: sl()));
           sl.registerLazySingleton(() => GetCoursesByCategoryUseCase(repository: sl()));
           sl.registerLazySingleton(() => SearchCoursesUseCase(repository: sl()));
           sl.registerLazySingleton(() => GetCourseDetailsUseCase(repository: sl()));
+          sl.registerLazySingleton(() => GetEnrolledCoursesUseCase(repository: sl()));
 
   // Repository
   sl.registerLazySingleton<TodoRepository>(
@@ -121,6 +132,11 @@ Future<void> init() async {
       dataSource: sl(),
     ),
   );
+  sl.registerLazySingleton<EnrolledCoursesRepository>(
+    () => EnrolledCoursesRepositoryImpl(
+      dataSource: sl(),
+    ),
+  );
 
   // Data sources
   sl.registerLazySingleton<TodoDataSource>(
@@ -137,6 +153,9 @@ Future<void> init() async {
   );
   sl.registerLazySingleton<CourseDetailDataSource>(
     () => CourseDetailDataSourceImpl(),
+  );
+  sl.registerLazySingleton<EnrolledCoursesDataSource>(
+    () => EnrolledCoursesDataSourceImpl(),
   );
 
   //! Core

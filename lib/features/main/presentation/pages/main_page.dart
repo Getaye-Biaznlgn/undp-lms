@@ -5,6 +5,7 @@ import 'package:lms/core/theme/app_theme.dart';
 import 'package:lms/features/main/presentation/bloc/main_bloc.dart';
 import 'package:lms/features/home/presentation/pages/home_page.dart';
 import 'package:lms/features/courses/presentation/pages/courses_page.dart';
+import 'package:lms/features/saved/presentation/bloc/enrolled_courses_bloc.dart';
 import 'package:lms/features/saved/presentation/pages/saved_page.dart';
 import 'package:lms/features/profile/presentation/pages/profile_page.dart';
 import 'package:lms/dependency_injection.dart';
@@ -40,6 +41,9 @@ class MainView extends StatelessWidget {
             currentIndex: state.selectedIndex,
             onTap: (index) {
               context.read<MainBloc>().add(ChangeTab(index));
+              if(index == 2){
+                context.read<EnrolledCoursesBloc>().add(const GetEnrolledCoursesEvent());
+              }
             },
             items:  [
               BottomNavigationBarItem(
