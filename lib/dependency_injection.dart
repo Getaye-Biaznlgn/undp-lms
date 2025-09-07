@@ -46,6 +46,8 @@ import 'package:lms/features/auth/domain/repositories/user_profile_repository.da
 import 'package:lms/features/auth/domain/usecases/get_user_profile_usecase.dart';
 import 'package:lms/features/auth/domain/usecases/update_profile_usecase.dart';
 import 'package:lms/features/auth/domain/usecases/update_profile_picture_usecase.dart';
+import 'package:lms/features/auth/domain/usecases/update_bio_usecase.dart';
+import 'package:lms/features/auth/domain/usecases/update_password_usecase.dart';
 import 'package:lms/features/auth/presentation/bloc/user_profile_bloc.dart';
 import 'package:get_it/get_it.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
@@ -102,6 +104,8 @@ Future<void> init() async {
               getUserProfileUseCase: sl(),
               updateProfileUseCase: sl(),
               updateProfilePictureUseCase: sl(),
+              updateBioUseCase: sl(),
+              updatePasswordUseCase: sl(),
             ),
           );
 
@@ -122,6 +126,8 @@ Future<void> init() async {
           sl.registerLazySingleton(() => GetUserProfileUseCase(repository: sl()));
           sl.registerLazySingleton(() => UpdateProfileUseCase(sl()));
           sl.registerLazySingleton(() => UpdateProfilePictureUseCase(sl()));
+          sl.registerLazySingleton(() => UpdateBioUseCase(sl()));
+          sl.registerLazySingleton(() => UpdatePasswordUseCase(sl()));
 
   // Repository
   sl.registerLazySingleton<TodoRepository>(

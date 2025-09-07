@@ -10,6 +10,8 @@ abstract class UserProfileDataSource {
   Future<NetworkResponse> getUserProfile();
   Future<NetworkResponse> updateProfile(Map<String, dynamic> profileData);
   Future<NetworkResponse> updateProfilePicture(File imageFile);
+  Future<NetworkResponse> updateBio(Map<String, dynamic> bioData);
+  Future<NetworkResponse> updatePassword(Map<String, dynamic> passwordData);
 }
 
 class UserProfileDataSourceImpl implements UserProfileDataSource {
@@ -54,6 +56,46 @@ class UserProfileDataSourceImpl implements UserProfileDataSource {
     } catch (e, stackTrace) {
       Logger().e('Error in updateProfilePicture: $e', stackTrace: stackTrace);
       return NetworkResponse.error('Failed to upload profile picture: $e');
+    }
+  }
+
+  @override
+  Future<NetworkResponse> updateBio(Map<String, dynamic> bioData) async {
+    try {
+      Logger().i('Starting bio update with data: $bioData');
+      
+      final response = await ApiService().apiCall(
+        endPoint: ApiRoutes.updateBio,
+        body: bioData,
+        requestType: RequestType.put,
+      );
+      
+      Logger().i('Bio update API call completed. Success: ${response.success}, Error: ${response.error}');
+      
+      return response;
+    } catch (e, stackTrace) {
+      Logger().e('Error in updateBio: $e', stackTrace: stackTrace);
+      return NetworkResponse.error('Failed to update bio: $e');
+    }
+  }
+
+  @override
+  Future<NetworkResponse> updatePassword(Map<String, dynamic> passwordData) async {
+    try {
+      Logger().i('Starting password update');
+      
+      final response = await ApiService().apiCall(
+        endPoint: ApiRoutes.changePassword,
+        body: passwordData,
+        requestType: RequestType.put,
+      );
+      
+      Logger().i('Password update API call completed. Success: ${response.success}, Error: ${response.error}');
+      
+      return response;
+    } catch (e, stackTrace) {
+      Logger().e('Error in updatePassword: $e', stackTrace: stackTrace);
+      return NetworkResponse.error('Failed to update password: $e');
     }
   }
 }

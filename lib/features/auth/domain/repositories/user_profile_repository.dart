@@ -7,5 +7,7 @@ abstract class UserProfileRepository {
   Future<Either<Failure, UserProfileModel>> getUserProfile();
   Future<Either<Failure, bool>> updateProfile(Map<String, dynamic> profileData);
   Future<Either<Failure, bool>> updateProfilePicture(File imageFile);
+  Future<Either<Failure, bool>> updateBio(Map<String, dynamic> bioData);
+  Future<Either<Failure, bool>> updatePassword(Map<String, dynamic> passwordData);
 }
 

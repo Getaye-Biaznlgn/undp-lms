@@ -67,3 +67,39 @@ class UserProfilePictureUpdateErrorState extends UserProfileState {
   List<Object> get props => [message];
 }
 
+class UserProfileBioUpdatingState extends UserProfileState {}
+
+class UserProfileBioUpdatedState extends UserProfileState {
+  const UserProfileBioUpdatedState();
+
+  @override
+  List<Object> get props => [];
+}
+
+class UserProfileBioUpdateErrorState extends UserProfileState {
+  final String message;
+
+  const UserProfileBioUpdateErrorState({required this.message});
+
+  @override
+  List<Object> get props => [message];
+}
+
+class UserProfilePasswordUpdatingState extends UserProfileState {}
+
+class UserProfilePasswordUpdatedState extends UserProfileState {
+  const UserProfilePasswordUpdatedState();
+
+  @override
+  List<Object> get props => [];
+}
+
+class UserProfilePasswordUpdateErrorState extends UserProfileState {
+  final String message;
+
+  const UserProfilePasswordUpdateErrorState({required this.message});
+
+  @override
+  List<Object> get props => [message];
+}
+

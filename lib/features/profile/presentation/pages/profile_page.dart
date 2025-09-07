@@ -14,6 +14,8 @@ import 'package:lms/core/widgets/retry_button.dart';
 import 'package:lms/dependency_injection.dart';
 import 'package:lms/features/auth/presentation/bloc/user_profile_bloc.dart';
 import 'package:lms/features/profile/presentation/widgets/update_profile_form.dart';
+import 'package:lms/features/profile/presentation/widgets/update_bio_form.dart';
+import 'package:lms/features/profile/presentation/widgets/update_password_form.dart';
 
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});
@@ -33,6 +35,22 @@ class ProfilePage extends StatelessWidget {
               SnackbarUtils.showSuccess(context, 'Profile picture updated successfully!');
             }
           } else if (state is UserProfilePictureUpdateErrorState) {
+            if (context.mounted) {
+              SnackbarUtils.showError(context, state.message);
+            }
+          } else if (state is UserProfileBioUpdatedState) {
+            if (context.mounted) {
+              SnackbarUtils.showSuccess(context, 'Bio updated successfully!');
+            }
+          } else if (state is UserProfileBioUpdateErrorState) {
+            if (context.mounted) {
+              SnackbarUtils.showError(context, state.message);
+            }
+          } else if (state is UserProfilePasswordUpdatedState) {
+            if (context.mounted) {
+              SnackbarUtils.showSuccess(context, 'Password updated successfully!');
+            }
+          } else if (state is UserProfilePasswordUpdateErrorState) {
             if (context.mounted) {
               SnackbarUtils.showError(context, state.message);
             }
@@ -202,6 +220,18 @@ class ProfilePage extends StatelessWidget {
           title: 'Edit Profile',
           onTap: () {
             _showUpdateProfileModal(context, userProfile);
+          },
+        ),
+        _buildListItem(
+          title: 'Update Bio',
+          onTap: () {
+            _showUpdateBioModal(context, userProfile);
+          },
+        ),
+        _buildListItem(
+          title: 'Change Password',
+          onTap: () {
+            _showUpdatePasswordModal(context, userProfile);
           },
         ),
         _buildListItem(
@@ -480,6 +510,146 @@ class ProfilePage extends StatelessWidget {
               ),
             );
           },
+        ),
+      ),
+    );
+  }
+
+  void _showUpdateBioModal(BuildContext context, userProfile) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => Container(
+        height: MediaQuery.of(context).size.height * 0.8,
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(20),
+            topRight: Radius.circular(20),
+          ),
+        ),
+        child: Column(
+          children: [
+            // Handle bar
+            Container(
+              margin: const EdgeInsets.only(top: 12),
+              width: 40,
+              height: 4,
+              decoration: BoxDecoration(
+                color: Colors.grey[300],
+                borderRadius: BorderRadius.circular(2),
+              ),
+            ),
+            // Header
+            Padding(
+              padding: const EdgeInsets.all(16),
+              child: Row(
+                children: [
+                  IconButton(
+                    onPressed: () => Navigator.pop(context),
+                    icon: const Icon(Icons.close),
+                  ),
+                  const Spacer(),
+                  Text(
+                    'Update Bio',
+                    style: TextStyle(
+                      fontSize: 18.sp,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const Spacer(),
+                  const SizedBox(width: 48), // Balance the close button
+                ],
+              ),
+            ),
+            // Form
+            Expanded(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: UpdateBioForm(
+                  userProfile: userProfile,
+                  onSuccess: () {
+                    Navigator.pop(context);
+                    // Refresh the profile data
+                    context.read<UserProfileBloc>().add(const GetUserProfileEvent(forceRefresh: true));
+                  },
+                  onError: () {
+                    Navigator.pop(context);
+                  },
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showUpdatePasswordModal(BuildContext context, userProfile) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => Container(
+        height: MediaQuery.of(context).size.height * 0.7,
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(20),
+            topRight: Radius.circular(20),
+          ),
+        ),
+        child: Column(
+          children: [
+            // Handle bar
+            Container(
+              margin: const EdgeInsets.only(top: 12),
+              width: 40,
+              height: 4,
+              decoration: BoxDecoration(
+                color: Colors.grey[300],
+                borderRadius: BorderRadius.circular(2),
+              ),
+            ),
+            // Header
+            Padding(
+              padding: const EdgeInsets.all(16),
+              child: Row(
+                children: [
+                  IconButton(
+                    onPressed: () => Navigator.pop(context),
+                    icon: const Icon(Icons.close),
+                  ),
+                  const Spacer(),
+                  Text(
+                    'Change Password',
+                    style: TextStyle(
+                      fontSize: 18.sp,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const Spacer(),
+                  const SizedBox(width: 48), // Balance the close button
+                ],
+              ),
+            ),
+            // Form
+            Expanded(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: UpdatePasswordForm(
+                  userProfile: userProfile,
+                  onSuccess: () {
+                    Navigator.pop(context);
+                  },
+                  onError: () {
+                    Navigator.pop(context);
+                  },
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );

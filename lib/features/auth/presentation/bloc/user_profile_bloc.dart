@@ -7,6 +7,8 @@ import 'package:lms/features/auth/data/models/user_profile_model.dart';
 import 'package:lms/features/auth/domain/usecases/get_user_profile_usecase.dart';
 import 'package:lms/features/auth/domain/usecases/update_profile_usecase.dart';
 import 'package:lms/features/auth/domain/usecases/update_profile_picture_usecase.dart';
+import 'package:lms/features/auth/domain/usecases/update_bio_usecase.dart';
+import 'package:lms/features/auth/domain/usecases/update_password_usecase.dart';
 
 part 'user_profile_event.dart';
 part 'user_profile_state.dart';
@@ -15,16 +17,22 @@ class UserProfileBloc extends Bloc<UserProfileEvent, UserProfileState> {
   final GetUserProfileUseCase getUserProfileUseCase;
   final UpdateProfileUseCase updateProfileUseCase;
   final UpdateProfilePictureUseCase updateProfilePictureUseCase;
+  final UpdateBioUseCase updateBioUseCase;
+  final UpdatePasswordUseCase updatePasswordUseCase;
   UserProfileModel? userProfile;
 
   UserProfileBloc({
     required this.getUserProfileUseCase,
     required this.updateProfileUseCase,
     required this.updateProfilePictureUseCase,
+    required this.updateBioUseCase,
+    required this.updatePasswordUseCase,
   }) : super(UserProfileInitialState()) {
     on<GetUserProfileEvent>(_onGetUserProfile);
     on<UpdateUserProfileEvent>(_onUpdateUserProfile);
     on<UpdateUserProfilePictureEvent>(_onUpdateUserProfilePicture);
+    on<UpdateUserBioEvent>(_onUpdateUserBio);
+    on<UpdateUserPasswordEvent>(_onUpdateUserPassword);
   }
 
   Future<void> _onGetUserProfile(
@@ -90,6 +98,49 @@ class UserProfileBloc extends Bloc<UserProfileEvent, UserProfileState> {
         Logger().i('UserProfileBloc: Profile picture update successful, refreshing profile data');
         emit(UserProfilePictureUpdatedState());
         add(GetUserProfileEvent(forceRefresh: true));
+      },
+    );
+  }
+
+  Future<void> _onUpdateUserBio(
+    UpdateUserBioEvent event,
+    Emitter<UserProfileState> emit,
+  ) async {
+    Logger().i('UserProfileBloc: Starting bio update with data: ${event.bioData}');
+    emit(UserProfileBioUpdatingState());
+    
+    final failureOrUpdateResult = await updateBioUseCase(UpdateBioParams(bioData: event.bioData));
+    
+    failureOrUpdateResult.fold(
+      (failure) {
+        Logger().e('UserProfileBloc: Bio update failed: ${failure.message}');
+        emit(UserProfileBioUpdateErrorState(message: failure.message));
+      },
+      (updateResult) {
+        Logger().i('UserProfileBloc: Bio update successful, refreshing profile data');
+        emit(UserProfileBioUpdatedState());
+        add(GetUserProfileEvent(forceRefresh: true));
+      },
+    );
+  }
+
+  Future<void> _onUpdateUserPassword(
+    UpdateUserPasswordEvent event,
+    Emitter<UserProfileState> emit,
+  ) async {
+    Logger().i('UserProfileBloc: Starting password update');
+    emit(UserProfilePasswordUpdatingState());
+    
+    final failureOrUpdateResult = await updatePasswordUseCase(UpdatePasswordParams(passwordData: event.passwordData));
+    
+    failureOrUpdateResult.fold(
+      (failure) {
+        Logger().e('UserProfileBloc: Password update failed: ${failure.message}');
+        emit(UserProfilePasswordUpdateErrorState(message: failure.message));
+      },
+      (updateResult) {
+        Logger().i('UserProfileBloc: Password update successful');
+        emit(UserProfilePasswordUpdatedState());
       },
     );
   }

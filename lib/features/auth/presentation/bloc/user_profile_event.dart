@@ -38,3 +38,25 @@ class UpdateUserProfilePictureEvent extends UserProfileEvent {
   List<Object> get props => [imageFile];
 }
 
+class UpdateUserBioEvent extends UserProfileEvent {
+  final Map<String, dynamic> bioData;
+
+  const UpdateUserBioEvent({
+    required this.bioData,
+  });
+
+  @override
+  List<Object> get props => [bioData];
+}
+
+class UpdateUserPasswordEvent extends UserProfileEvent {
+  final Map<String, dynamic> passwordData;
+
+  const UpdateUserPasswordEvent({
+    required this.passwordData,
+  });
+
+  @override
+  List<Object> get props => [passwordData];
+}
+
