@@ -5,8 +5,7 @@ import 'package:lms/core/widgets/retry_button.dart';
 import 'package:lms/core/widgets/common_app_bar.dart';
 import 'package:lms/features/saved/presentation/bloc/enrolled_courses_bloc.dart';
 import 'package:lms/features/saved/presentation/widgets/enrolled_course_item.dart';
-import 'package:lms/core/router/app_router.dart';
-import 'package:go_router/go_router.dart';
+import 'package:lms/features/home/presentation/pages/course_detail_page.dart';
 
 class SavedPage extends StatelessWidget {
   const SavedPage({super.key});
@@ -82,7 +81,14 @@ class SavedPage extends StatelessWidget {
                   return EnrolledCourseItem(
                     course: course,
                     onTap: () {
-                      context.push('${AppRouter.courseDetail}/${course.slug}');
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => CourseDetailPage(
+                            courseSlug: course.slug,
+                          ),
+                        ),
+                      );
                     },
                   );
                 },

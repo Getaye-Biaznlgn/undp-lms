@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lms/core/theme/app_theme.dart';
+import 'package:lms/core/constants/app_images.dart';
 import 'package:lms/core/router/app_router.dart';
 import 'package:lms/core/utils/snackbar_utils.dart';
 import 'package:lms/core/widgets/common_button.dart';
@@ -65,14 +66,16 @@ class _SignupPageState extends State<SignupPage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  SizedBox(height: 20.h),
                   // Back Button
 
-                  // App Icon
+                  // App Logo
                   Center(
-                    child: Icon(
-                      Icons.school,
-                      size: 40.sp,
-                      color: AppTheme.primaryColor,
+                    child: Image.asset(
+                      AppImages.logo,
+                      height: 80.sp,
+                      width: 100.sp,
+                      fit: BoxFit.contain,
                     ),
                   ),
 

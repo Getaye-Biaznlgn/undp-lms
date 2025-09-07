@@ -64,12 +64,14 @@ class _LoginPageState extends State<LoginPage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // App Icon
+                  SizedBox(height: 20.h),
+                  // App Logo
                   Center(
-                    child: Icon(
-                      Icons.school,
-                      size: 40.sp,
-                      color: AppTheme.primaryColor,
+                    child: Image.asset(
+                      AppImages.logo,
+                      height: 80.sp,
+                      width: 100.sp,
+                      fit: BoxFit.contain,
                     ),
                   ),
 
