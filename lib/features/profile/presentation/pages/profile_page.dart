@@ -8,7 +8,9 @@ import 'package:lms/core/services/localstorage_service.dart';
 import 'package:lms/core/theme/app_theme.dart';
 import 'package:lms/core/widgets/common_app_bar.dart';
 import 'package:lms/core/widgets/retry_button.dart';
+import 'package:lms/dependency_injection.dart';
 import 'package:lms/features/auth/presentation/bloc/user_profile_bloc.dart';
+import 'package:lms/features/profile/presentation/widgets/update_profile_form.dart';
 
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});
@@ -16,7 +18,6 @@ class ProfilePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Fetch user profile when page loads
-    context.read<UserProfileBloc>().add(const GetUserProfileEvent());
     
     return Scaffold(
       appBar: const WhiteAppBar(
@@ -24,13 +25,14 @@ class ProfilePage extends StatelessWidget {
       ),
       body: BlocBuilder<UserProfileBloc, UserProfileState>(
         builder: (context, state) {
-          if (state is UserProfileLoadingState) {
+          final userProfile = sl<UserProfileBloc>().userProfile;
+          if ( userProfile==null && state is UserProfileLoadingState) {
             return const Center(
               child: CircularProgressIndicator(
                 // color: AppTheme.accentColor,
               ),
             );
-          } else if (state is UserProfileErrorState) {
+          } else if ( userProfile==null && state is UserProfileErrorState) {
             return Center(
               child: ErrorRetryWidget(
                 title: state.message,
@@ -39,8 +41,8 @@ class ProfilePage extends StatelessWidget {
                 },
               ),
             );
-          } else if (state is UserProfileLoadedState) {
-            return _buildProfileContent(context, state.userProfile);
+          } else if (userProfile!=null) {
+            return _buildProfileContent(context,userProfile);
           }
           
           return const Center(
@@ -59,12 +61,9 @@ class ProfilePage extends StatelessWidget {
           _buildProfileHeader(userProfile),
           const SizedBox(height: 24),
           
-          // Language and Currency Section
-          _buildLanguageCurrencySection(),
-          const SizedBox(height: 24),
           
           // Account Section
-          _buildAccountSection(),
+          _buildAccountSection(context, userProfile),
           const SizedBox(height: 24),
           
           // Help and Support Section
@@ -134,32 +133,18 @@ class ProfilePage extends StatelessWidget {
     );
   }
 
-  Widget _buildLanguageCurrencySection() {
-    return _buildSection(
-      title: 'Language and Currency',
-      items: [
-        _buildListItem(
-          title: 'Language',
-          subtitle: '(English)',
-          onTap: () {
-            // Handle language selection
-          },
-        ),
-        _buildListItem(
-          title: 'Currency',
-          subtitle: '(USD)',
-          onTap: () {
-            // Handle currency selection
-          },
-        ),
-      ],
-    );
-  }
+  
 
-  Widget _buildAccountSection() {
+  Widget _buildAccountSection(BuildContext context, userProfile) {
     return _buildSection(
       title: 'Account',
       items: [
+        _buildListItem(
+          title: 'Edit Profile',
+          onTap: () {
+            _showUpdateProfileModal(context, userProfile);
+          },
+        ),
         _buildListItem(
           title: 'Account Setting',
           onTap: () {
@@ -294,7 +279,7 @@ class ProfilePage extends StatelessWidget {
               foregroundColor: AppTheme.errorColor,
               side: BorderSide(color: AppTheme.errorColor, width: 1.5),
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(30),
               ),
               padding: const EdgeInsets.symmetric(vertical: 16),
             ),
@@ -307,6 +292,77 @@ class ProfilePage extends StatelessWidget {
             ),
           ),
         ),
+    );
+  }
+
+  void _showUpdateProfileModal(BuildContext context, userProfile) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => Container(
+        height: MediaQuery.of(context).size.height * 0.9,
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(20),
+            topRight: Radius.circular(20),
+          ),
+        ),
+        child: Column(
+          children: [
+            // Handle bar
+            Container(
+              margin: const EdgeInsets.only(top: 12),
+              width: 40,
+              height: 4,
+              decoration: BoxDecoration(
+                color: Colors.grey[300],
+                borderRadius: BorderRadius.circular(2),
+              ),
+            ),
+            // Header
+            Padding(
+              padding: const EdgeInsets.all(16),
+              child: Row(
+                children: [
+                  IconButton(
+                    onPressed: () => Navigator.pop(context),
+                    icon: const Icon(Icons.close),
+                  ),
+                  const Spacer(),
+                  Text(
+                    'Edit Profile',
+                    style: TextStyle(
+                      fontSize: 18.sp,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const Spacer(),
+                  const SizedBox(width: 48), // Balance the close button
+                ],
+              ),
+            ),
+            // Form
+            Expanded(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: UpdateProfileForm(
+                  userProfile: userProfile,
+                  onSuccess: () {
+                    Navigator.pop(context);
+                    // Refresh the profile data
+                    // context.read<UserProfileBloc>().add(const GetUserProfileEvent());
+                  },
+                  onError: () {
+                   Navigator.pop(context);
+                  },
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

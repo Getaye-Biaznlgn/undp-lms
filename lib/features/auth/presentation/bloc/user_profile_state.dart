@@ -29,3 +29,23 @@ class UserProfileErrorState extends UserProfileState {
   List<Object> get props => [message];
 }
 
+class UserProfileUpdatingState extends UserProfileState {}
+
+class UserProfileUpdatedState extends UserProfileState {
+ 
+
+  const UserProfileUpdatedState();
+
+  @override
+  List<Object> get props => [];
+}
+
+class UserProfileUpdateErrorState extends UserProfileState {
+  final String message;
+
+  const UserProfileUpdateErrorState({required this.message});
+
+  @override
+  List<Object> get props => [message];
+}
+

@@ -8,6 +8,22 @@ abstract class UserProfileEvent extends Equatable {
 }
 
 class GetUserProfileEvent extends UserProfileEvent {
-  const GetUserProfileEvent();
+  final bool forceRefresh;
+
+  const GetUserProfileEvent({this.forceRefresh = false});
+
+  @override
+  List<Object> get props => [forceRefresh];
+}
+
+class UpdateUserProfileEvent extends UserProfileEvent {
+  final Map<String, dynamic> profileData;
+
+  const UpdateUserProfileEvent({
+    required this.profileData,
+  });
+
+  @override
+  List<Object> get props => [profileData];
 }
 

@@ -18,5 +18,8 @@ class ApiRoutes{
     static const String courseDetails="/course/{slug}";
 
     static const String enrolledCourses="/enrolled-courses";
-
-}
+    static const String updateProfile="/update-profile";
+    static const String updateProfilePicture="/update-profile-picture"; // ATTACH FIEL AS 'image' key
+    static const String changePassword="/update-password";
+    static const String updateBio="/update-bio"; // help us to update bio, short_bio and job_title
+  }

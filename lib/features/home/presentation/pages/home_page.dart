@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lms/core/theme/app_theme.dart';
+import 'package:lms/dependency_injection.dart';
+import 'package:lms/features/auth/presentation/bloc/user_profile_bloc.dart';
 import 'package:lms/features/home/presentation/bloc/home_bloc.dart';
 import 'package:lms/features/home/presentation/widgets/popular_lessons_section.dart';
 import 'package:lms/features/home/presentation/widgets/fresh_courses_section.dart';
@@ -63,13 +65,18 @@ class _HomePageState extends State<HomePage> {
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              'Hi, Chirley',
-              style: AppTheme.headlineSmall.copyWith(
-                fontWeight: FontWeight.bold,
-                color: AppTheme.textPrimaryColor,
-              ),
+            BlocBuilder<UserProfileBloc, UserProfileState>(
+              builder: (context, state) {
+                return Text(
+                  'Hi, ${sl<UserProfileBloc>().userProfile?.name??''}',
+                  style: AppTheme.headlineSmall.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: AppTheme.textPrimaryColor,
+                  ),
+                );
+              },
             ),
+            
             const SizedBox(height: 4),
             Text(
               'Find your lessons today!',

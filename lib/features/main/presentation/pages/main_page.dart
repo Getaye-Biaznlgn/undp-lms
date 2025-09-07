@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:lms/core/theme/app_theme.dart';
+import 'package:lms/features/auth/presentation/bloc/user_profile_bloc.dart';
 import 'package:lms/features/main/presentation/bloc/main_bloc.dart';
 import 'package:lms/features/home/presentation/pages/home_page.dart';
 import 'package:lms/features/courses/presentation/pages/courses_page.dart';
@@ -43,6 +44,9 @@ class MainView extends StatelessWidget {
               context.read<MainBloc>().add(ChangeTab(index));
               if(index == 2){
                 context.read<EnrolledCoursesBloc>().add(const GetEnrolledCoursesEvent());
+              }
+              if(index == 3){
+                context.read<UserProfileBloc>().add(const GetUserProfileEvent());
               }
             },
             items:  [
