@@ -45,6 +45,7 @@ import 'package:lms/features/auth/data/repositories/user_profile_repository_impl
 import 'package:lms/features/auth/domain/repositories/user_profile_repository.dart';
 import 'package:lms/features/auth/domain/usecases/get_user_profile_usecase.dart';
 import 'package:lms/features/auth/domain/usecases/update_profile_usecase.dart';
+import 'package:lms/features/auth/domain/usecases/update_profile_picture_usecase.dart';
 import 'package:lms/features/auth/presentation/bloc/user_profile_bloc.dart';
 import 'package:get_it/get_it.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
@@ -100,6 +101,7 @@ Future<void> init() async {
             () => UserProfileBloc(
               getUserProfileUseCase: sl(),
               updateProfileUseCase: sl(),
+              updateProfilePictureUseCase: sl(),
             ),
           );
 
@@ -119,6 +121,7 @@ Future<void> init() async {
           sl.registerLazySingleton(() => GetEnrolledCoursesUseCase(repository: sl()));
           sl.registerLazySingleton(() => GetUserProfileUseCase(repository: sl()));
           sl.registerLazySingleton(() => UpdateProfileUseCase(sl()));
+          sl.registerLazySingleton(() => UpdateProfilePictureUseCase(sl()));
 
   // Repository
   sl.registerLazySingleton<TodoRepository>(

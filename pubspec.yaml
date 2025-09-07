@@ -46,6 +46,7 @@ dependencies:
   logger: ^2.6.1
   flutter_screenutil: ^5.9.0
   webview_flutter: ^4.9.0
+  image_picker: ^1.1.2
   # Using webview_flutter for embedded YouTube videos in the header
 
 dev_dependencies:

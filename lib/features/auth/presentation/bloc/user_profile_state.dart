@@ -49,3 +49,21 @@ class UserProfileUpdateErrorState extends UserProfileState {
   List<Object> get props => [message];
 }
 
+class UserProfilePictureUpdatingState extends UserProfileState {}
+
+class UserProfilePictureUpdatedState extends UserProfileState {
+  const UserProfilePictureUpdatedState();
+
+  @override
+  List<Object> get props => [];
+}
+
+class UserProfilePictureUpdateErrorState extends UserProfileState {
+  final String message;
+
+  const UserProfilePictureUpdateErrorState({required this.message});
+
+  @override
+  List<Object> get props => [message];
+}
+

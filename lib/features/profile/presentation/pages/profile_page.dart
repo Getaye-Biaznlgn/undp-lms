@@ -1,11 +1,14 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:lms/core/constants/api_routes.dart';
 import 'package:lms/core/router/app_router.dart';
 import 'package:lms/core/services/localstorage_service.dart';
 import 'package:lms/core/theme/app_theme.dart';
+import 'package:lms/core/utils/snackbar_utils.dart';
 import 'package:lms/core/widgets/common_app_bar.dart';
 import 'package:lms/core/widgets/retry_button.dart';
 import 'package:lms/dependency_injection.dart';
@@ -23,9 +26,53 @@ class ProfilePage extends StatelessWidget {
       appBar: const WhiteAppBar(
         title: 'Profile',
       ),
-      body: BlocBuilder<UserProfileBloc, UserProfileState>(
-        builder: (context, state) {
+      body: BlocListener<UserProfileBloc, UserProfileState>(
+        listener: (context, state) {
+          if (state is UserProfilePictureUpdatedState) {
+            if (context.mounted) {
+              SnackbarUtils.showSuccess(context, 'Profile picture updated successfully!');
+            }
+          } else if (state is UserProfilePictureUpdateErrorState) {
+            if (context.mounted) {
+              SnackbarUtils.showError(context, state.message);
+            }
+          }
+        },
+        child: BlocBuilder<UserProfileBloc, UserProfileState>(
+          builder: (context, state) {
           final userProfile = sl<UserProfileBloc>().userProfile;
+          
+          // Show loading overlay when updating profile picture
+          if (state is UserProfilePictureUpdatingState) {
+            return Stack(
+              children: [
+                if (userProfile != null) _buildProfileContent(context, userProfile),
+                Container(
+                  color: Colors.black.withOpacity(0.3),
+                  child: const Center(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        CircularProgressIndicator(
+                          valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                        ),
+                        SizedBox(height: 16),
+                        Text(
+                          'Uploading image...',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            );
+          }
+          
           if ( userProfile==null && state is UserProfileLoadingState) {
             return const Center(
               child: CircularProgressIndicator(
@@ -49,6 +96,7 @@ class ProfilePage extends StatelessWidget {
             child: Text('No profile data available'),
           );
         },
+        ),
       ),
     );
   }
@@ -58,7 +106,7 @@ class ProfilePage extends StatelessWidget {
       child: Column(
         children: [
           // Profile Header
-          _buildProfileHeader(userProfile),
+          _buildProfileHeader(context, userProfile),
           const SizedBox(height: 24),
           
           
@@ -77,7 +125,7 @@ class ProfilePage extends StatelessWidget {
     );
   }
 
-  Widget _buildProfileHeader(userProfile) {
+  Widget _buildProfileHeader(BuildContext context, userProfile) {
     return Container(
       // margin: const EdgeInsets.symmetric(horizontal: 16),
       // padding: const EdgeInsets.all(24),
@@ -94,20 +142,31 @@ class ProfilePage extends StatelessWidget {
       ),
       child: Column(
         children: [
-          // Profile Image
-          CircleAvatar(
-            radius: 50.r,
-            backgroundColor: AppTheme.accentColor.withOpacity(0.1),
-            backgroundImage: userProfile.image.isNotEmpty
-                ? NetworkImage('${ApiRoutes.imageUrl}${userProfile.image}')
-                : null,
-            child: userProfile.image.isEmpty
-                ? const Icon(
-                    Icons.person,
-                    size: 40,
-                    color: AppTheme.accentColor,
-                  )
-                : null,
+          // Profile Image with edit functionality
+          GestureDetector(
+            onTap: () => _showImagePicker(context),
+            child: Stack(
+              children: [
+                _buildProfileImage(userProfile),
+                Positioned(
+                  bottom: 0,
+                  right: 0,
+                  child: Container(
+                    padding: const EdgeInsets.all(6),
+                    decoration: BoxDecoration(
+                      color: AppTheme.primaryColor,
+                      shape: BoxShape.circle,
+                      border: Border.all(color: Colors.white, width: 2),
+                    ),
+                    child: const Icon(
+                      Icons.camera_alt,
+                      size: 16,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
           const SizedBox(height: 16),
           
@@ -364,5 +423,129 @@ class ProfilePage extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  Widget _buildProfileImage(userProfile) {
+    if (userProfile.image.isEmpty) {
+      return CircleAvatar(
+        radius: 50.r,
+        backgroundColor: AppTheme.accentColor.withOpacity(0.1),
+        child: const Icon(
+          Icons.person,
+          size: 40,
+          color: AppTheme.accentColor,
+        ),
+      );
+    }
+
+    return CircleAvatar(
+      radius: 50.r,
+      backgroundColor: AppTheme.accentColor.withOpacity(0.1),
+      child: ClipOval(
+        child: Image.network(
+          '${ApiRoutes.imageUrl}/${userProfile.image}',
+          width: 100.r,
+          height: 100.r,
+          fit: BoxFit.cover,
+          errorBuilder: (context, error, stackTrace) {
+            // Return fallback icon when image fails to load
+            return Container(
+              width: 100.r,
+              height: 100.r,
+              decoration: BoxDecoration(
+                color: AppTheme.accentColor.withOpacity(0.1),
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(
+                Icons.person,
+                size: 40,
+                color: AppTheme.accentColor,
+              ),
+            );
+          },
+          loadingBuilder: (context, child, loadingProgress) {
+            if (loadingProgress == null) return child;
+            return Container(
+              width: 100.r,
+              height: 100.r,
+              decoration: BoxDecoration(
+                color: AppTheme.accentColor.withOpacity(0.1),
+                shape: BoxShape.circle,
+              ),
+              child: const Center(
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                  valueColor: AlwaysStoppedAnimation<Color>(AppTheme.accentColor),
+                ),
+              ),
+            );
+          },
+        ),
+      ),
+    );
+  }
+
+  void _showImagePicker(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext modalContext) {
+        return SafeArea(
+          child: Wrap(
+            children: [
+              ListTile(
+                leading: const Icon(Icons.photo_library),
+                title: const Text('Choose from Gallery'),
+                onTap: () {
+                  Navigator.of(modalContext).pop();
+                  // Use the original context, not the modal context
+                  _pickImage(ImageSource.gallery, context);
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.photo_camera),
+                title: const Text('Take Photo'),
+                onTap: () {
+                  Navigator.of(modalContext).pop();
+                  // Use the original context, not the modal context
+                  _pickImage(ImageSource.camera, context);
+                },
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Future<void> _pickImage(ImageSource source, BuildContext context) async {
+    try {
+      final ImagePicker picker = ImagePicker();
+      final XFile? image = await picker.pickImage(
+        source: source,
+        maxWidth: 1024,
+        maxHeight: 1024,
+        imageQuality: 80,
+      );
+
+      if (image != null) {
+        final File imageFile = File(image.path);
+        print('ProfilePage: Image selected, dispatching UpdateUserProfilePictureEvent for: ${imageFile.path}');
+        
+        // Check if the widget is still mounted before using context
+        if (context.mounted) {
+          context.read<UserProfileBloc>().add(
+            UpdateUserProfilePictureEvent(imageFile: imageFile),
+          );
+        }
+      } else {
+        print('ProfilePage: No image selected');
+      }
+    } catch (e) {
+      print('ProfilePage: Error picking image: $e');
+      // Check if the widget is still mounted before showing error
+      if (context.mounted) {
+        SnackbarUtils.showError(context, 'Failed to pick image: $e');
+      }
+    }
   }
 }
