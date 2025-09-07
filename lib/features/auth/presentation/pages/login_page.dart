@@ -9,6 +9,7 @@ import 'package:lms/core/utils/snackbar_utils.dart';
 import 'package:lms/core/widgets/common_button.dart';
 import 'package:lms/core/widgets/common_text_field.dart';
 import 'package:lms/features/auth/presentation/bloc/auth_bloc.dart';
+import 'package:lms/features/auth/presentation/bloc/user_profile_bloc.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -48,11 +49,13 @@ class _LoginPageState extends State<LoginPage> {
         child: BlocListener<AuthBloc, AuthState>(
           listener: (context, state) {
             if (state is AuthSuccessState) {
+              // Fetch user profile after successful login
+              context.read<UserProfileBloc>().add(const GetUserProfileEvent());
               // Navigate to home on successful login
               context.go(AppRouter.home);
-                         } else if (state is AuthErrorState) {
-               SnackbarUtils.showError(context, state.message);
-             }
+            } else if (state is AuthErrorState) {
+              SnackbarUtils.showError(context, state.message);
+            }
           },
           child: SingleChildScrollView(
             padding: EdgeInsets.all(24.w),

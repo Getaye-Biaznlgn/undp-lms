@@ -13,6 +13,7 @@ import 'package:lms/features/courses/presentation/bloc/category_bloc.dart';
 import 'package:lms/features/courses/presentation/bloc/courses_bloc.dart';
 import 'package:lms/features/home/presentation/bloc/course_detail_bloc.dart';
 import 'package:lms/features/saved/presentation/bloc/enrolled_courses_bloc.dart';
+import 'package:lms/features/auth/presentation/bloc/user_profile_bloc.dart';
 import 'package:lms/features/main/presentation/bloc/main_bloc.dart';
 
 void main() async {
@@ -53,6 +54,9 @@ class MyApp extends StatelessWidget {
             ),
             BlocProvider<EnrolledCoursesBloc>(
               create: (context) => sl<EnrolledCoursesBloc>(),
+            ),
+            BlocProvider<UserProfileBloc>(
+              create: (context) => sl<UserProfileBloc>(),
             ),
             BlocProvider<MainBloc>(
               create: (context) => sl<MainBloc>(),

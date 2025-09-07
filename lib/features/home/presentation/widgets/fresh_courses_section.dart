@@ -6,6 +6,7 @@ import 'package:lms/core/theme/app_theme.dart';
 import 'package:lms/core/widgets/retry_button.dart';
 import 'package:lms/core/widgets/course_card.dart';
 import 'package:lms/features/home/presentation/bloc/home_bloc.dart';
+import 'package:lms/features/main/presentation/bloc/main_bloc.dart';
 import 'package:lms/core/router/app_router.dart';
 
 class FreshCoursesSection extends StatelessWidget {
@@ -26,11 +27,17 @@ class FreshCoursesSection extends StatelessWidget {
                 color: AppTheme.textPrimaryColor,
               ),
             ),
-            Text(
-              'See All',
-              style: AppTheme.labelLarge.copyWith(
-                color: AppTheme.primaryColor,
-                fontWeight: FontWeight.w600,
+            GestureDetector(
+              onTap: () {
+                // Navigate to Courses tab (index 1)
+                context.read<MainBloc>().add(const ChangeTab(1));
+              },
+              child: Text(
+                'See All',
+                style: AppTheme.labelLarge.copyWith(
+                  color: AppTheme.primaryColor,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
             ),
           ],

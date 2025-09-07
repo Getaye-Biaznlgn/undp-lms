@@ -8,7 +8,7 @@ class ApiRoutes{
      static const String login="/login";
      static const String forgetPassword="/forget-password";
      static const String resetPassword="/reset-password";
-
+     static const String profile="/profile";
      static const String popularCourses="/popular-courses";
      static const String freshCourses="/fresh-courses";
      static const String courseMainCategories="/course-main-categories";
@@ -18,4 +18,5 @@ class ApiRoutes{
     static const String courseDetails="/course/{slug}";
 
     static const String enrolledCourses="/enrolled-courses";
+
 }

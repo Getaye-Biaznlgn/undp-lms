@@ -40,6 +40,11 @@ import 'package:lms/features/saved/data/repositories/enrolled_courses_repository
 import 'package:lms/features/saved/domain/repositories/enrolled_courses_repository.dart';
 import 'package:lms/features/saved/domain/usecases/get_enrolled_courses_usecase.dart';
 import 'package:lms/features/saved/presentation/bloc/enrolled_courses_bloc.dart';
+import 'package:lms/features/auth/data/datasources/user_profile_data_source.dart';
+import 'package:lms/features/auth/data/repositories/user_profile_repository_impl.dart';
+import 'package:lms/features/auth/domain/repositories/user_profile_repository.dart';
+import 'package:lms/features/auth/domain/usecases/get_user_profile_usecase.dart';
+import 'package:lms/features/auth/presentation/bloc/user_profile_bloc.dart';
 import 'package:get_it/get_it.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
 
@@ -90,6 +95,11 @@ Future<void> init() async {
               getEnrolledCoursesUseCase: sl(),
             ),
           );
+          sl.registerLazySingleton(
+            () => UserProfileBloc(
+              getUserProfileUseCase: sl(),
+            ),
+          );
 
   // Use cases
   sl.registerLazySingleton(() => GetTodo(sl()));
@@ -105,6 +115,7 @@ Future<void> init() async {
           sl.registerLazySingleton(() => SearchCoursesUseCase(repository: sl()));
           sl.registerLazySingleton(() => GetCourseDetailsUseCase(repository: sl()));
           sl.registerLazySingleton(() => GetEnrolledCoursesUseCase(repository: sl()));
+          sl.registerLazySingleton(() => GetUserProfileUseCase(repository: sl()));
 
   // Repository
   sl.registerLazySingleton<TodoRepository>(
@@ -137,6 +148,11 @@ Future<void> init() async {
       dataSource: sl(),
     ),
   );
+  sl.registerLazySingleton<UserProfileRepository>(
+    () => UserProfileRepositoryImpl(
+      dataSource: sl(),
+    ),
+  );
 
   // Data sources
   sl.registerLazySingleton<TodoDataSource>(
@@ -156,6 +172,9 @@ Future<void> init() async {
   );
   sl.registerLazySingleton<EnrolledCoursesDataSource>(
     () => EnrolledCoursesDataSourceImpl(),
+  );
+  sl.registerLazySingleton<UserProfileDataSource>(
+    () => UserProfileDataSourceImpl(),
   );
 
   //! Core

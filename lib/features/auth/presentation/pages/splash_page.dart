@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lms/core/services/localstorage_service.dart';
 import 'package:lms/core/theme/app_theme.dart';
 import 'package:lms/core/router/app_router.dart';
+import 'package:lms/features/auth/presentation/bloc/user_profile_bloc.dart';
 
 class SplashPage extends StatefulWidget {
   const SplashPage({super.key});
@@ -48,6 +50,8 @@ class _SplashPageState extends State<SplashPage>
      String? token = AppPreferences().getToken();
      String? userId = AppPreferences().getUserId();
      if(token != null && userId != null){
+      // Fetch user profile if token exists
+      context.read<UserProfileBloc>().add(const GetUserProfileEvent());
       context.go(AppRouter.home);
      }else{
       context.go(AppRouter.onboarding);
