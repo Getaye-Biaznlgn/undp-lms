@@ -64,18 +64,18 @@ class _LoginPageState extends State<LoginPage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  SizedBox(height: 20.h),
+                  SizedBox(height: 10.h),
                   // App Logo
                   Center(
                     child: Image.asset(
                       AppImages.logo,
-                      height: 80.sp,
-                      width: 100.sp,
-                      fit: BoxFit.contain,
+                      height: 120.sp,
+                      // width: 100.sp,
+                      fit: BoxFit.cover,
                     ),
                   ),
 
-                  SizedBox(height: 40.h),
+                  SizedBox(height: 10.h),
 
                   // Title
                   Text(

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
+import 'package:lms/core/constants/app_images.dart';
 import 'package:lms/core/services/localstorage_service.dart';
 import 'package:lms/core/theme/app_theme.dart';
 import 'package:lms/core/router/app_router.dart';
@@ -82,38 +84,18 @@ class _SplashPageState extends State<SplashPage>
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     // UNDP Logo/Icon
-                    Container(
-                      width: 120,
-                      height: 120,
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(20),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.1),
-                            blurRadius: 20,
-                            offset: const Offset(0, 10),
-                          ),
-                        ],
-                      ),
-                      child: const Icon(
-                        Icons.school,
-                        size: 60,
-                        color: AppTheme.primaryColor,
-                      ),
-                    ),
+                   
                     const SizedBox(height: 32),
                     // App Title
-                    const Text(
-                      'UNDP LMS',
-                      style: TextStyle(
-                        fontSize: 32,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                        letterSpacing: 1.2,
-                      ),
+                     Center(
+                    child: Image.asset(
+                      AppImages.logo,
+                      height: 150.sp,
+                      // width: 100.sp,
+                      fit: BoxFit.cover,
                     ),
-                    const SizedBox(height: 8),
+                  ),
+                 SizedBox(height: 10.h),
                     // Subtitle
                     const Text(
                       'Learning Management System',

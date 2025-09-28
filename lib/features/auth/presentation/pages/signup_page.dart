@@ -74,8 +74,8 @@ class _SignupPageState extends State<SignupPage> {
                     child: Image.asset(
                       AppImages.logo,
                       height: 80.sp,
-                      width: 100.sp,
-                      fit: BoxFit.contain,
+                      // width: 100.sp,
+                      fit: BoxFit.cover,
                     ),
                   ),
 
