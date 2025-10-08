@@ -61,7 +61,7 @@ class CourseDetailModel {
       lessonsCount: json['lessons_count'] ?? 0,
       quizzesCount: json['quizzes_count'] ?? 0,
       languages: json['languages'] ?? '',
-      price: json['price'] ?? '',
+      price: json['price']?.toString() ?? '',
       discount: json['discount'] ?? 0,
       description: json['description'] ?? '',
       curriculums: (json['curriculums'] as List<dynamic>?)

@@ -24,7 +24,7 @@ class CourseModel {
       slug: json['slug'] ?? '',
       title: json['title'] ?? '',
       thumbnail: json['thumbnail'] ?? '',
-      price: json['price'] ?? '',
+      price: json['price']?.toString() ?? '',
       discount: json['discount'] ?? 0,
       instructor: Instructor.fromJson(json['instructor'] ?? {}),
       students: json['students'] ?? 0,
