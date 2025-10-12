@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:lms/core/theme/app_theme.dart';
 import 'package:lms/features/home/data/models/course_detail_model.dart';
+import 'package:lms/features/home/presentation/pages/quiz_list_page.dart';
 
 class CourseDetailTabs extends StatefulWidget {
   final CourseDetailModel courseDetail;
@@ -17,17 +18,11 @@ class CourseDetailTabs extends StatefulWidget {
 
 class _CourseDetailTabsState extends State<CourseDetailTabs> with SingleTickerProviderStateMixin {
   late TabController _tabController;
-  int _selectedTabIndex = 0; // Start with Overview tab
 
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 3, vsync: this);
-    _tabController.addListener(() {
-      setState(() {
-        _selectedTabIndex = _tabController.index;
-      });
-    });
+    _tabController = TabController(length: 4, vsync: this);
     _tabController.animateTo(0); // Start with Overview tab
   }
 
@@ -61,6 +56,7 @@ class _CourseDetailTabsState extends State<CourseDetailTabs> with SingleTickerPr
               tabs: const [
                 Tab(text: 'Overview'),
                 Tab(text: 'Curriculum'),
+                Tab(text: 'Quizzes'),
                 Tab(text: 'Reviews'),
               ],
             ),
@@ -74,6 +70,7 @@ class _CourseDetailTabsState extends State<CourseDetailTabs> with SingleTickerPr
               children: [
                 _buildOverviewTab(),
                 _buildCurriculumTab(),
+                _buildQuizzesTab(),
                 _buildReviewsTab(),
               ],
             ),
@@ -254,10 +251,158 @@ class _CourseDetailTabsState extends State<CourseDetailTabs> with SingleTickerPr
     );
   }
 
-  Widget _buildReviewsTab() {
-    return Center(
+  Widget _buildQuizzesTab() {
+    return SingleChildScrollView(
+      padding: EdgeInsets.all(20.w),
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Icon(
+            Icons.quiz,
+            size: 60.w,
+            color: AppTheme.primaryColor,
+          ),
+          SizedBox(height: 16.h),
+          Text(
+            'Test Your Knowledge',
+            textAlign: TextAlign.center,
+            style: AppTheme.titleLarge.copyWith(
+              color: AppTheme.textPrimaryColor,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          SizedBox(height: 8.h),
+          Text(
+            'Take quizzes to assess your understanding of the course material',
+            textAlign: TextAlign.center,
+            style: AppTheme.bodyMedium.copyWith(
+              color: AppTheme.textSecondaryColor,
+            ),
+          ),
+          SizedBox(height: 24.h),
+          Container(
+            padding: EdgeInsets.all(16.w),
+            decoration: BoxDecoration(
+              color: AppTheme.backgroundColor,
+              borderRadius: BorderRadius.circular(12.r),
+            ),
+            child: Column(
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    _buildQuizStat(
+                      icon: Icons.quiz,
+                      label: 'Available',
+                      value: '${widget.courseDetail.quizzesCount}',
+                    ),
+                    Container(
+                      width: 1,
+                      height: 40.h,
+                      color: AppTheme.dividerColor,
+                    ),
+                    _buildQuizStat(
+                      icon: Icons.timer,
+                      label: 'Timed',
+                      value: 'Yes',
+                    ),
+                    Container(
+                      width: 1,
+                      height: 40.h,
+                      color: AppTheme.dividerColor,
+                    ),
+                    _buildQuizStat(
+                      icon: Icons.check_circle,
+                      label: 'Graded',
+                      value: 'Yes',
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+          SizedBox(height: 24.h),
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => QuizListPage(
+                      courseId: widget.courseDetail.id.toString(),
+                      courseTitle: widget.courseDetail.title,
+                    ),
+                  ),
+                );
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppTheme.primaryColor,
+                padding: EdgeInsets.symmetric(vertical: 16.h),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8.r),
+                ),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.play_arrow,
+                    color: Colors.white,
+                    size: 20.w,
+                  ),
+                  SizedBox(width: 8.w),
+                  Text(
+                    'View All Quizzes',
+                    style: AppTheme.labelLarge.copyWith(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildQuizStat({
+    required IconData icon,
+    required String label,
+    required String value,
+  }) {
+    return Column(
+      children: [
+        Icon(
+          icon,
+          size: 24.w,
+          color: AppTheme.primaryColor,
+        ),
+        SizedBox(height: 4.h),
+        Text(
+          value,
+          style: AppTheme.titleMedium.copyWith(
+            fontWeight: FontWeight.w600,
+            color: AppTheme.textPrimaryColor,
+          ),
+        ),
+        Text(
+          label,
+          style: AppTheme.bodySmall.copyWith(
+            color: AppTheme.textSecondaryColor,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildReviewsTab() {
+    return SingleChildScrollView(
+      padding: EdgeInsets.all(20.w),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Icon(
             Icons.rate_review,
@@ -267,6 +412,7 @@ class _CourseDetailTabsState extends State<CourseDetailTabs> with SingleTickerPr
           SizedBox(height: 16.h),
           Text(
             'No reviews yet',
+            textAlign: TextAlign.center,
             style: AppTheme.titleMedium.copyWith(
               color: AppTheme.textSecondaryColor,
             ),
@@ -274,6 +420,7 @@ class _CourseDetailTabsState extends State<CourseDetailTabs> with SingleTickerPr
           SizedBox(height: 8.h),
           Text(
             'Be the first to review this course',
+            textAlign: TextAlign.center,
             style: AppTheme.bodyMedium.copyWith(
               color: AppTheme.textSecondaryColor,
             ),

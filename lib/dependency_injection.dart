@@ -31,10 +31,18 @@ import 'package:lms/features/courses/domain/usecases/search_courses_usecase.dart
 import 'package:lms/features/courses/presentation/bloc/category_bloc.dart';
 import 'package:lms/features/courses/presentation/bloc/courses_bloc.dart';
 import 'package:lms/features/home/data/datasources/course_detail_data_source.dart';
+import 'package:lms/features/home/data/datasources/quiz_data_source.dart';
 import 'package:lms/features/home/data/repositories/course_detail_repository_impl.dart';
+import 'package:lms/features/home/data/repositories/quiz_repository_impl.dart';
 import 'package:lms/features/home/domain/repositories/course_detail_repository.dart';
+import 'package:lms/features/home/domain/repositories/quiz_repository.dart';
 import 'package:lms/features/home/domain/usecases/get_course_details_usecase.dart';
+import 'package:lms/features/home/domain/usecases/get_quizzes_by_course_id_usecase.dart';
+import 'package:lms/features/home/domain/usecases/get_quiz_detail_usecase.dart';
+import 'package:lms/features/home/domain/usecases/submit_quiz_usecase.dart';
+import 'package:lms/features/home/domain/usecases/get_quiz_results_usecase.dart';
 import 'package:lms/features/home/presentation/bloc/course_detail_bloc.dart';
+import 'package:lms/features/home/presentation/bloc/quiz_bloc.dart';
 import 'package:lms/features/saved/data/datasources/enrolled_courses_data_source.dart';
 import 'package:lms/features/saved/data/repositories/enrolled_courses_repository_impl.dart';
 import 'package:lms/features/saved/domain/repositories/enrolled_courses_repository.dart';
@@ -95,6 +103,14 @@ Future<void> init() async {
             ),
           );
           sl.registerLazySingleton(
+            () => QuizBloc(
+              getQuizzesByCourseIdUseCase: sl(),
+              getQuizDetailUseCase: sl(),
+              submitQuizUseCase: sl(),
+              getQuizResultsUseCase: sl(),
+            ),
+          );
+          sl.registerLazySingleton(
             () => EnrolledCoursesBloc(
               getEnrolledCoursesUseCase: sl(),
             ),
@@ -122,6 +138,10 @@ Future<void> init() async {
           sl.registerLazySingleton(() => GetCoursesByCategoryUseCase(repository: sl()));
           sl.registerLazySingleton(() => SearchCoursesUseCase(repository: sl()));
           sl.registerLazySingleton(() => GetCourseDetailsUseCase(repository: sl()));
+          sl.registerLazySingleton(() => GetQuizzesByCourseIdUseCase(repository: sl()));
+          sl.registerLazySingleton(() => GetQuizDetailUseCase(repository: sl()));
+          sl.registerLazySingleton(() => SubmitQuizUseCase(repository: sl()));
+          sl.registerLazySingleton(() => GetQuizResultsUseCase(repository: sl()));
           sl.registerLazySingleton(() => GetEnrolledCoursesUseCase(repository: sl()));
           sl.registerLazySingleton(() => GetUserProfileUseCase(repository: sl()));
           sl.registerLazySingleton(() => UpdateProfileUseCase(sl()));
@@ -155,6 +175,11 @@ Future<void> init() async {
       dataSource: sl(),
     ),
   );
+  sl.registerLazySingleton<QuizRepository>(
+    () => QuizRepositoryImpl(
+      dataSource: sl(),
+    ),
+  );
   sl.registerLazySingleton<EnrolledCoursesRepository>(
     () => EnrolledCoursesRepositoryImpl(
       dataSource: sl(),
@@ -181,6 +206,9 @@ Future<void> init() async {
   );
   sl.registerLazySingleton<CourseDetailDataSource>(
     () => CourseDetailDataSourceImpl(),
+  );
+  sl.registerLazySingleton<QuizDataSource>(
+    () => QuizDataSourceImpl(),
   );
   sl.registerLazySingleton<EnrolledCoursesDataSource>(
     () => EnrolledCoursesDataSourceImpl(),

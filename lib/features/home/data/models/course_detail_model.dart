@@ -1,4 +1,5 @@
 class CourseDetailModel {
+  final String id;
   final String demoVideoSource;
   final String demoVideo;
   final String thumbnail;
@@ -21,6 +22,7 @@ class CourseDetailModel {
   final List<Curriculum> curriculums;
 
   CourseDetailModel({
+    required this.id,
     required this.demoVideoSource,
     required this.demoVideo,
     required this.thumbnail,
@@ -45,6 +47,7 @@ class CourseDetailModel {
 
   factory CourseDetailModel.fromJson(Map<String, dynamic> json) {
     return CourseDetailModel(
+      id: json['id'].toString(),
       demoVideoSource: json['demo_video_source'] ?? '',
       demoVideo: json['demo_video'] ?? '',
       thumbnail: json['thumbnail'] ?? '',
@@ -72,6 +75,7 @@ class CourseDetailModel {
 
   Map<String, dynamic> toJson() {
     return {
+      'id': id,
       'demo_video_source': demoVideoSource,
       'demo_video': demoVideo,
       'thumbnail': thumbnail,
