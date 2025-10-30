@@ -2,6 +2,7 @@ class ApiRoutes{
 
      static const String apiUrl = "https://test.dololoet.com/api";
      static const String imageUrl = "https://test.dololoet.com";
+     static const String socketUrl = "http://93.127.203.113:6002";
      static const String todos="/todos";
      static const String register="/register";
      static const String signup="/register";
