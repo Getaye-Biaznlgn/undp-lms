@@ -1,6 +1,7 @@
 import 'package:lms/core/network/network_info.dart';
 import 'package:lms/core/services/api_service.dart';
 import 'package:lms/core/services/socket_manager.dart';
+import 'package:lms/features/chat/presentation/bloc/chat_users_bloc.dart';
 import 'package:lms/features/todo/data/datasources/todo_data_source.dart';
 import 'package:lms/features/todo/data/repositories/todo_repository_impl.dart';
 import 'package:lms/features/todo/domain/repositories/todo_repository.dart';
@@ -60,7 +61,7 @@ import 'package:lms/features/auth/domain/usecases/update_password_usecase.dart';
 import 'package:lms/features/auth/presentation/bloc/user_profile_bloc.dart';
 import 'package:get_it/get_it.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
-import 'package:lms/features/chat/presentation/bloc/chat_bloc.dart';
+import 'package:lms/features/chat/presentation/bloc/conversation_bloc.dart';
 
 final sl = GetIt.instance;
 
@@ -127,7 +128,8 @@ Future<void> init() async {
             ),
           );
 
-    sl.registerLazySingleton(() => ChatBloc(socketManager: sl()));
+  sl.registerLazySingleton(() => ConversationBloc());
+   sl.registerLazySingleton(() => ChatUsersBloc(socketManager: sl()));
 
   // Use cases
   sl.registerLazySingleton(() => GetTodo(sl()));

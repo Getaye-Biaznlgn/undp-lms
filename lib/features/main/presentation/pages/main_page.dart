@@ -3,13 +3,13 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'package:lms/features/auth/presentation/bloc/user_profile_bloc.dart';
-import 'package:lms/features/chat/presentation/bloc/chat_bloc.dart';
+import 'package:lms/features/chat/presentation/bloc/chat_users_bloc.dart';
 import 'package:lms/features/main/presentation/bloc/main_bloc.dart';
 import 'package:lms/features/home/presentation/pages/home_page.dart';
 import 'package:lms/features/courses/presentation/pages/courses_page.dart';
 import 'package:lms/features/saved/presentation/bloc/enrolled_courses_bloc.dart';
 import 'package:lms/features/saved/presentation/pages/saved_page.dart';
-import 'package:lms/features/chat/presentation/pages/chat_page.dart';
+import 'package:lms/features/chat/presentation/pages/chat_user_page.dart';
 import 'package:lms/features/profile/presentation/pages/profile_page.dart';
 
 
@@ -36,7 +36,7 @@ class MainView extends StatelessWidget {
               const HomePage(),
               const CoursesPage(),
               const SavedPage(),
-              const ChatPage(),
+              const ChatUserPage(),
               const ProfilePage(),
             ],
           ),
@@ -50,7 +50,7 @@ class MainView extends StatelessWidget {
               }
     
               if(index == 3){
-                context.read<ChatBloc>().add(const LoadChatEvent());
+                context.read<ChatUsersBloc>().add(LoadChatUsersEvent());
               }
               if(index == 4){
                 context.read<UserProfileBloc>().add(const GetUserProfileEvent());
