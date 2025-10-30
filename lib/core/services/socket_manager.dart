@@ -6,7 +6,6 @@ import 'package:logger/logger.dart';
 import 'package:socket_io_client/socket_io_client.dart' as io;
 
 enum SocketEvent {
-  
   request,
 
 }
@@ -26,7 +25,7 @@ class SocketManager {
     return _instance!;
   }
 
-  initSocketConnection(String userId) {
+  initSocketConnection() {
     try {
       socket = io.io(
         ApiRoutes.socketUrl,
@@ -38,7 +37,10 @@ class SocketManager {
       );
 
       socket.connect();
-
+      socket.onConnect((data) {
+        Logger().i("socket connected");
+      });
+      
       socket.onDisconnect((data) {
         Logger().i("socket disconnected");
       });
@@ -66,24 +68,6 @@ class SocketManager {
     }
   }
 
-  void reconnectPassenger(
-      {required String tripId,
-      required String passengerId,
-      required String driverId}) {
-    try {
-      socket.emit(
-          SocketEvent.request.name,
-          jsonEncode({
-            "tripId": tripId.toString(),
-            "passengerId": passengerId.toString(),
-            "driverId": driverId.toString()
-          }));
-
-      Logger().e("reconnectDriver emitted ${tripId}/$passengerId,/ $driverId ");
-    } catch (e, st) {
-      Logger().e("reconnectDriver error: $e");
-    }
-  }
   
   void closeSocket() {
     socket.disconnect();

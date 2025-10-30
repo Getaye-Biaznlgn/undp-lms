@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:lms/core/services/socket_manager.dart';
 import 'package:lms/core/theme/app_theme.dart';
 import 'package:lms/dependency_injection.dart';
 import 'package:lms/features/auth/presentation/bloc/user_profile_bloc.dart';
@@ -21,8 +22,10 @@ class _HomePageState extends State<HomePage> {
     // Fetch popular courses when page loads
         context.read<HomeBloc>().add(GetPopularCoursesEvent());
         context.read<HomeBloc>().add(GetFreshCoursesEvent());
-  }
+              sl<SocketManager>().initSocketConnection();
 
+  }
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
