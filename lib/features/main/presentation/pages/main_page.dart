@@ -50,7 +50,7 @@ class MainView extends StatelessWidget {
               }
     
               if(index == 3){
-                context.read<ChatUsersBloc>().add(LoadChatUsersEvent());
+                context.read<ChatUsersBloc>().add(const LoadChatUsersEvent());
               }
               if(index == 4){
                 context.read<UserProfileBloc>().add(const GetUserProfileEvent());

@@ -2,6 +2,7 @@ import 'package:lms/core/network/network_info.dart';
 import 'package:lms/core/services/api_service.dart';
 import 'package:lms/core/services/socket_manager.dart';
 import 'package:lms/features/chat/presentation/bloc/chat_users_bloc.dart';
+import 'package:lms/core/services/localstorage_service.dart';
 import 'package:lms/features/todo/data/datasources/todo_data_source.dart';
 import 'package:lms/features/todo/data/repositories/todo_repository_impl.dart';
 import 'package:lms/features/todo/domain/repositories/todo_repository.dart';
@@ -128,8 +129,13 @@ Future<void> init() async {
             ),
           );
 
-  sl.registerLazySingleton(() => ConversationBloc());
-   sl.registerLazySingleton(() => ChatUsersBloc(socketManager: sl()));
+  sl.registerLazySingleton(() => ChatUsersBloc(socketManager: sl()));
+  
+  // Factory for ConversationBloc - creates new instance per conversation
+  sl.registerFactory(() => ConversationBloc(
+    socketManager: sl(),
+    currentUserId: AppPreferences().getUserId() ?? '',
+  ));
 
   // Use cases
   sl.registerLazySingleton(() => GetTodo(sl()));

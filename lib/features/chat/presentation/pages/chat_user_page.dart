@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:lms/core/theme/app_theme.dart';
 import 'package:lms/features/chat/presentation/bloc/chat_users_bloc.dart';
+import 'package:lms/features/chat/presentation/pages/chat_page.dart';
 
 class ChatUserPage extends StatelessWidget {
   const ChatUserPage({super.key});
@@ -65,6 +66,12 @@ class ChatUserPage extends StatelessWidget {
                                 ],
                               ),
                               onTap: () {
+                                    Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => ChatPage(otherUser: user),
+                                  ),
+                                );
                                 // Navigate to conversation screen later
                               },
                             );

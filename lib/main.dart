@@ -8,6 +8,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lms/dependency_injection.dart';
 import 'package:lms/features/auth/presentation/bloc/auth_bloc.dart';
+import 'package:lms/features/chat/presentation/bloc/chat_users_bloc.dart';
 import 'package:lms/features/home/presentation/bloc/home_bloc.dart';
 import 'package:lms/features/courses/presentation/bloc/category_bloc.dart';
 import 'package:lms/features/courses/presentation/bloc/courses_bloc.dart';
@@ -65,6 +66,14 @@ class MyApp extends StatelessWidget {
             BlocProvider<MainBloc>(
               create: (context) => sl<MainBloc>(),
             ),
+            BlocProvider<ChatUsersBloc>(
+              create: (context) => sl<ChatUsersBloc>(),
+            ),
+            // Note: ConversationBloc is registered as factory and created per conversation in ChatPage
+            // If you need a global instance, you can uncomment the line below
+            // BlocProvider<ConversationBloc>(
+            //   create: (context) => sl<ConversationBloc>(),
+            // ),
           ],
           child: MaterialApp.router(
             title: 'UNDP LMS',
