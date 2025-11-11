@@ -43,7 +43,12 @@ class ConversationBloc extends Bloc<ConversationEvent, ConversationState> {
       socketManager.registerConversation(
         chatIdInt,
         (messages) {
+          // Bulk messages callback (for fetched messages)
           add(MessagesFetchedEvent(messages: messages));
+        },
+        (message) {
+          // Single message callback (for sent/received messages)
+          add(MessageReceivedEvent(message: message));
         },
       );
       
@@ -84,7 +89,12 @@ class ConversationBloc extends Bloc<ConversationEvent, ConversationState> {
     socketManager.registerConversation(
       event.serverChatId,
       (messages) {
+        // Bulk messages callback (for fetched messages)
         add(MessagesFetchedEvent(messages: messages));
+      },
+      (message) {
+        // Single message callback (for sent/received messages)
+        add(MessageReceivedEvent(message: message));
       },
     );
     
@@ -144,8 +154,18 @@ class ConversationBloc extends Bloc<ConversationEvent, ConversationState> {
     MessageReceivedEvent event,
     Emitter<ConversationState> emit,
   ) {
-    final updatedMessages = List<ChatMessage>.from(state.messages)..add(event.message);
-    emit(state.copyWith(messages: updatedMessages));
+    // Check if message already exists (to avoid duplicates)
+    final exists = state.messages.any((msg) => msg.id == event.message.id);
+    if (!exists) {
+      final updatedMessages = List<ChatMessage>.from(state.messages)..add(event.message);
+      // Sort messages by created_at (oldest first)
+      updatedMessages.sort((a, b) {
+        final aTime = a.createdAt ?? '';
+        final bTime = b.createdAt ?? '';
+        return aTime.compareTo(bTime);
+      });
+      emit(state.copyWith(messages: updatedMessages));
+    }
   }
 
   void _onMessagesFetched(

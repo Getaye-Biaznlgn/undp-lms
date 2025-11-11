@@ -28,6 +28,17 @@ enum SocketEvent {
   read_message,
 }
 
+// Internal class to hold conversation callbacks
+class _ConversationCallbacks {
+  final Function(List<ChatMessage>) onBulkMessages;
+  final Function(ChatMessage) onSingleMessage;
+  
+  _ConversationCallbacks({
+    required this.onBulkMessages,
+    required this.onSingleMessage,
+  });
+}
+
 class SocketManager {
   static SocketManager? _instance;
   late io.Socket socket;
@@ -126,7 +137,32 @@ class SocketManager {
       });
 
       socket.on(SocketEvent.message_sent.name, (data) {
-        Logger().i("socket message sent: $data");
+        try {
+          Logger().i("socket message_sent response: $data");
+          if (data is Map && data['success'] == true && data['message'] != null) {
+            final messageJson = data['message'] as Map<String, dynamic>;
+            try {
+              final message = ChatMessage.fromJson(messageJson);
+              Logger().i("Parsed message_sent response - message id: ${message.id}");
+              
+              // Dispatch to ConversationBloc via registered conversations
+              // Find conversation by chat_id from the message
+              final chatId = message.chatId;
+              final callbacks = _activeConversations[chatId];
+              if (callbacks != null) {
+                // Add single message to the conversation using single message callback
+                callbacks.onSingleMessage(message);
+                Logger().i("Dispatched sent message to chat_id: $chatId");
+              } else {
+                Logger().w("No registered conversation found for sent message chat_id: $chatId");
+              }
+            } catch (e) {
+              Logger().e("Error parsing message_sent response: $e");
+            }
+          }
+        } catch (e, st) {
+          Logger().e("socket message_sent error: $e", stackTrace: st);
+        }
       });
 
       socket.on(SocketEvent.messages_fetched.name, (data) {
@@ -202,12 +238,13 @@ class SocketManager {
     required String senderType,
   }) {
     final payload = {
-      'chat_id': chatId,
+      'chat_id': chatId ?? '',
       'sender_id': senderId,
       'receiver_id': receiverId,
       'message': message,
       'sender_type': senderType,
     };
+    Logger().i("Sending message - payload: $payload");
     socket.emit(SocketEvent.send_message.name, payload);
   }
 
@@ -246,14 +283,22 @@ class SocketManager {
   }
 
   // Store active conversation blocs by chat_id (server-provided)
-  final Map<int, Function(List<ChatMessage>)> _activeConversations = {};
+  // Map<chatId, (bulkMessagesCallback, singleMessageCallback)>
+  final Map<int, _ConversationCallbacks> _activeConversations = {};
   
   // Store pending join requests: participant key -> callback(serverChatId, onlineUsers)
   final Map<String, Function(int, List<int>)> _pendingJoins = {};
   
   // Register an active conversation for message dispatching using chat_id
-  void registerConversation(int chatId, Function(List<ChatMessage>) onMessages) {
-    _activeConversations[chatId] = onMessages;
+  void registerConversation(
+    int chatId,
+    Function(List<ChatMessage>) onBulkMessages,
+    Function(ChatMessage) onSingleMessage,
+  ) {
+    _activeConversations[chatId] = _ConversationCallbacks(
+      onBulkMessages: onBulkMessages,
+      onSingleMessage: onSingleMessage,
+    );
     Logger().i("Registered conversation for chat_id: $chatId");
   }
   
@@ -329,15 +374,15 @@ class SocketManager {
     
     // Dispatch messages to registered conversations by chat_id
     conversationMessages.forEach((chatId, messages) {
-      final callback = _activeConversations[chatId];
-      if (callback != null) {
+      final callbacks = _activeConversations[chatId];
+      if (callbacks != null) {
         // Sort messages by created_at (oldest first)
         messages.sort((a, b) {
           final aTime = a.createdAt ?? '';
           final bTime = b.createdAt ?? '';
           return aTime.compareTo(bTime);
         });
-        callback(messages);
+        callbacks.onBulkMessages(messages);
         Logger().i("Dispatched ${messages.length} messages to chat_id: $chatId");
       } else {
         Logger().w("No registered conversation found for chat_id: $chatId (have ${messages.length} messages)");
