@@ -6,8 +6,8 @@ import 'package:lms/features/home/presentation/bloc/meeting_bloc.dart';
 import 'package:lms/features/home/presentation/bloc/meeting_event.dart';
 import 'package:lms/features/home/presentation/bloc/meeting_state.dart';
 import 'package:lms/features/home/data/models/meeting_model.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:intl/intl.dart';
+import 'package:lms/core/utils/url_launcher_utils.dart';
 
 class MeetingsListPage extends StatelessWidget {
   const MeetingsListPage({super.key});
@@ -167,7 +167,7 @@ class MeetingsListPage extends StatelessWidget {
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
-                onPressed: () => _launchMeetingUrl(meeting.joinUrl),
+                onPressed: () => _launchMeetingUrl(context, meeting.joinUrl),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppTheme.primaryColor,
                   foregroundColor: Colors.white,
@@ -220,11 +220,8 @@ class MeetingsListPage extends StatelessWidget {
     }
   }
 
-  Future<void> _launchMeetingUrl(String url) async {
-    final uri = Uri.parse(url);
-    if (await canLaunchUrl(uri)) {
-      await launchUrl(uri, mode: LaunchMode.externalApplication);
-    }
+  Future<void> _launchMeetingUrl(BuildContext context, String url) {
+    return UrlLauncherUtils.launchMeetingUrl(url, context: context);
   }
 }
 
