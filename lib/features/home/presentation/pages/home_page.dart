@@ -5,8 +5,11 @@ import 'package:lms/core/theme/app_theme.dart';
 import 'package:lms/dependency_injection.dart';
 import 'package:lms/features/auth/presentation/bloc/user_profile_bloc.dart';
 import 'package:lms/features/home/presentation/bloc/home_bloc.dart';
+import 'package:lms/features/home/presentation/bloc/meeting_bloc.dart';
+import 'package:lms/features/home/presentation/bloc/meeting_event.dart';
 import 'package:lms/features/home/presentation/widgets/popular_lessons_section.dart';
 import 'package:lms/features/home/presentation/widgets/fresh_courses_section.dart';
+import 'package:lms/features/home/presentation/widgets/live_sessions_section.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -22,6 +25,7 @@ class _HomePageState extends State<HomePage> {
     // Fetch popular courses when page loads
         context.read<HomeBloc>().add(GetPopularCoursesEvent());
         context.read<HomeBloc>().add(GetFreshCoursesEvent());
+        context.read<MeetingBloc>().add(const GetAllMeetingsEvent());
               sl<SocketManager>().initSocketConnection();
 
   }
@@ -47,6 +51,10 @@ class _HomePageState extends State<HomePage> {
               // Discover Top Picks Banner
               _buildTopPicksBanner(context),
               const SizedBox(height: 32),
+              
+               // Live Sessions Section
+               const LiveSessionsSection(),
+               const SizedBox(height: 24),
               
                // Popular Lessons Section
                const PopularLessonsSection(),

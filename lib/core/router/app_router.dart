@@ -8,6 +8,7 @@ import 'package:lms/features/auth/presentation/pages/signup_page.dart';
 import 'package:lms/features/auth/presentation/pages/forgot_password_page.dart';
 import 'package:lms/features/auth/presentation/pages/reset_password_page.dart';
 import 'package:lms/features/home/presentation/pages/course_detail_page.dart';
+import 'package:lms/features/home/presentation/pages/meetings_list_page.dart';
 
 class AppRouter {
   static const String splash = '/splash';
@@ -18,6 +19,7 @@ class AppRouter {
   static const String resetPassword = '/reset-password';
   static const String home = '/home';
   static const String courseDetail = '/course-detail';
+  static const String meetingsList = '/meetings-list';
   static const String initial = '/';
 
   static final GoRouter router = GoRouter(
@@ -127,6 +129,19 @@ class AppRouter {
           child: CourseDetailPage(
             courseSlug: state.uri.queryParameters['slug'] ?? '',
           ),
+          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+            return FadeTransition(
+              opacity: animation,
+              child: child,
+            );
+          },
+        ),
+      ),
+      GoRoute(
+        path: meetingsList,
+        pageBuilder: (context, state) => CustomTransitionPage(
+          key: state.pageKey,
+          child: const MeetingsListPage(),
           transitionsBuilder: (context, animation, secondaryAnimation, child) {
             return FadeTransition(
               opacity: animation,

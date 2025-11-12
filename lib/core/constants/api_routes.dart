@@ -35,5 +35,10 @@ class ApiRoutes{
     static const String courseReviews = "/course/reviews/{courseSlug}"; //BOTH GET AND POST
 
 
+  // meeting (Lives Sessions)
+  static const String allMeetings = "/meetings/all";
+  static const String meetingsByCourse = "/meetings/by-course?course_id={course_id}";
+  static const String meetingsByUser = "/meetings/by-user?user_id={user_id}";
+
 
   }
