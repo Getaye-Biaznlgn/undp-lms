@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:lms/core/theme/app_theme.dart';
 import 'package:lms/features/home/data/models/course_detail_model.dart';
 import 'package:lms/features/home/presentation/pages/quiz_list_page.dart';
+import 'package:lms/features/home/presentation/bloc/meeting_bloc.dart';
+import 'package:lms/features/home/presentation/bloc/meeting_event.dart';
+import 'package:lms/features/home/presentation/widgets/course_meetings_widget.dart';
 
 class CourseDetailTabs extends StatefulWidget {
   final CourseDetailModel courseDetail;
@@ -22,12 +26,27 @@ class _CourseDetailTabsState extends State<CourseDetailTabs> with SingleTickerPr
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 4, vsync: this);
+    _tabController = TabController(length: 5, vsync: this);
     _tabController.animateTo(0); // Start with Overview tab
+    _tabController.addListener(_onTabChanged);
+  }
+
+  void _onTabChanged() {
+    if (!_tabController.indexIsChanging) {
+      // When Meetings tab (index 4) is selected, fetch meetings
+      if (_tabController.index == 4) {
+        context.read<MeetingBloc>().add(
+              GetMeetingsByCourseIdEvent(
+                courseId: widget.courseDetail.id.toString(),
+              ),
+            );
+      }
+    }
   }
 
   @override
   void dispose() {
+    _tabController.removeListener(_onTabChanged);
     _tabController.dispose();
     super.dispose();
   }
@@ -57,6 +76,7 @@ class _CourseDetailTabsState extends State<CourseDetailTabs> with SingleTickerPr
                 Tab(text: 'Overview'),
                 Tab(text: 'Curriculum'),
                 Tab(text: 'Quizzes'),
+                Tab(text: 'Meetings'),
                 Tab(text: 'Reviews'),
               ],
             ),
@@ -71,6 +91,7 @@ class _CourseDetailTabsState extends State<CourseDetailTabs> with SingleTickerPr
                 _buildOverviewTab(),
                 _buildCurriculumTab(),
                 _buildQuizzesTab(),
+                _buildMeetingsTab(),
                 _buildReviewsTab(),
               ],
             ),
@@ -395,6 +416,12 @@ class _CourseDetailTabsState extends State<CourseDetailTabs> with SingleTickerPr
           ),
         ),
       ],
+    );
+  }
+
+  Widget _buildMeetingsTab() {
+    return CourseMeetingsWidget(
+      courseId: widget.courseDetail.id.toString(),
     );
   }
 

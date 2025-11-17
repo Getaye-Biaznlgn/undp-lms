@@ -4,5 +4,6 @@ import 'package:lms/features/home/data/models/meeting_model.dart';
 
 abstract class MeetingRepository {
   Future<Either<Failure, MeetingListModel>> getAllMeetings({int? page});
+  Future<Either<Failure, MeetingListModel>> getMeetingsByCourseId(String courseId, {int? page});
 }
 

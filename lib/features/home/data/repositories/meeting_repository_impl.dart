@@ -26,5 +26,21 @@ class MeetingRepositoryImpl implements MeetingRepository {
       return const Left(ServerFailure(message: errorMessage));
     }
   }
+
+  @override
+  Future<Either<Failure, MeetingListModel>> getMeetingsByCourseId(String courseId, {int? page}) async {
+    try {
+      final response = await dataSource.getMeetingsByCourseId(courseId, page: page);
+      if (response.success && response.data != null) {
+        final meetingList = MeetingListModel.fromJson(response.data);
+        return Right(meetingList);
+      } else {
+        return Left(ServerFailure(message: response.error ?? errorMessage));
+      }
+    } catch (exception, stackTrace) {
+      Logger().e(exception, stackTrace: stackTrace);
+      return const Left(ServerFailure(message: errorMessage));
+    }
+  }
 }
 

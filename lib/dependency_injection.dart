@@ -48,6 +48,7 @@ import 'package:lms/features/home/domain/usecases/get_quiz_detail_usecase.dart';
 import 'package:lms/features/home/domain/usecases/submit_quiz_usecase.dart';
 import 'package:lms/features/home/domain/usecases/get_quiz_results_usecase.dart';
 import 'package:lms/features/home/domain/usecases/get_all_meetings_usecase.dart';
+import 'package:lms/features/home/domain/usecases/get_meetings_by_course_id_usecase.dart';
 import 'package:lms/features/home/presentation/bloc/course_detail_bloc.dart';
 import 'package:lms/features/home/presentation/bloc/quiz_bloc.dart';
 import 'package:lms/features/home/presentation/bloc/meeting_bloc.dart';
@@ -122,6 +123,7 @@ Future<void> init() async {
           sl.registerLazySingleton(
             () => MeetingBloc(
               getAllMeetingsUseCase: sl(),
+              getMeetingsByCourseIdUseCase: sl(),
             ),
           );
           sl.registerLazySingleton(
@@ -165,6 +167,7 @@ Future<void> init() async {
           sl.registerLazySingleton(() => SubmitQuizUseCase(repository: sl()));
           sl.registerLazySingleton(() => GetQuizResultsUseCase(repository: sl()));
           sl.registerLazySingleton(() => GetAllMeetingsUseCase(repository: sl()));
+          sl.registerLazySingleton(() => GetMeetingsByCourseIdUseCase(repository: sl()));
           sl.registerLazySingleton(() => GetEnrolledCoursesUseCase(repository: sl()));
           sl.registerLazySingleton(() => GetUserProfileUseCase(repository: sl()));
           sl.registerLazySingleton(() => UpdateProfileUseCase(sl()));

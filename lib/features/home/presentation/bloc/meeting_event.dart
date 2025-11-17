@@ -16,6 +16,16 @@ class GetAllMeetingsEvent extends MeetingEvent {
   List<Object?> get props => [page];
 }
 
+class GetMeetingsByCourseIdEvent extends MeetingEvent {
+  final String courseId;
+  final int? page;
+
+  const GetMeetingsByCourseIdEvent({required this.courseId, this.page});
+
+  @override
+  List<Object?> get props => [courseId, page];
+}
+
 class ResetMeetingStateEvent extends MeetingEvent {
   const ResetMeetingStateEvent();
 }
