@@ -2,18 +2,24 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:lms/core/theme/app_theme.dart';
+import 'package:logger/logger.dart';
 import 'package:lms/features/home/data/models/course_detail_model.dart';
 import 'package:lms/features/home/presentation/pages/quiz_list_page.dart';
 import 'package:lms/features/home/presentation/bloc/meeting_bloc.dart';
 import 'package:lms/features/home/presentation/bloc/meeting_event.dart';
 import 'package:lms/features/home/presentation/widgets/course_meetings_widget.dart';
+import 'package:lms/features/home/domain/usecases/get_lesson_file_info_usecase.dart';
+import 'package:lms/features/home/domain/usecases/get_lesson_progress_usecase.dart';
+import 'package:lms/dependency_injection.dart';
 
 class CourseDetailTabs extends StatefulWidget {
   final CourseDetailModel courseDetail;
+  final Function(String, String, double)? onLessonTap; // (filePath, storage, startTime)
 
   const CourseDetailTabs({
     super.key,
     required this.courseDetail,
+    this.onLessonTap,
   });
 
   @override
@@ -22,6 +28,7 @@ class CourseDetailTabs extends StatefulWidget {
 
 class _CourseDetailTabsState extends State<CourseDetailTabs> with SingleTickerProviderStateMixin {
   late TabController _tabController;
+  String? _loadingLessonId; // Track which lesson is currently loading
 
   @override
   void initState() {
@@ -200,74 +207,68 @@ class _CourseDetailTabsState extends State<CourseDetailTabs> with SingleTickerPr
   Widget _buildChapterItem(Chapter chapter) {
     final isLesson = chapter.type == 'lesson';
     final item = chapter.item;
+    final lessonId = item.id.toString();
+    final isLoading = _loadingLessonId == lessonId;
     
-    return Container(
-      margin: EdgeInsets.only(left: 16.w, right: 16.w, bottom: 8.h),
-      padding: EdgeInsets.all(12.w),
-      decoration: BoxDecoration(
-        color: AppTheme.backgroundColor,
-        borderRadius: BorderRadius.circular(8.r),
-      ),
-      child: Row(
-        children: [
-          // Icon based on type
-          Icon(
-            isLesson ? Icons.play_circle_outline : Icons.quiz,
-            size: 20.w,
-            color: AppTheme.textSecondaryColor,
-          ),
-          SizedBox(width: 12.w),
-          
-          // Title and duration
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  item.title,
-                  style: AppTheme.bodyMedium.copyWith(
-                    color: AppTheme.textPrimaryColor,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-                if (isLesson && item.duration != null) ...[
-                  SizedBox(height: 4.h),
-                  Text(
-                    item.duration!,
-                    style: AppTheme.bodySmall.copyWith(
-                      color: AppTheme.textSecondaryColor,
-                    ),
-                  ),
-                ],
-              ],
-            ),
-          ),
-          
-          // Free indicator or lock
-          if (isLesson) ...[
-            if (item.isFree == true)
-              Container(
-                padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
-                decoration: BoxDecoration(
-                  color: Colors.green.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(4.r),
-                ),
-                child: Text(
-                  'FREE',
-                  style: AppTheme.bodySmall.copyWith(
-                    color: Colors.green,
-                    fontWeight: FontWeight.w600,
-                  ),
+    return GestureDetector(
+      onTap: isLesson && item.fileType == 'video' && widget.onLessonTap != null && !isLoading
+          ? () => _handleLessonTap(lessonId, widget.courseDetail.id)
+          : null,
+      child: Container(
+        margin: EdgeInsets.only(left: 16.w, right: 16.w, bottom: 8.h),
+        padding: EdgeInsets.all(12.w),
+        decoration: BoxDecoration(
+          color: AppTheme.backgroundColor,
+          borderRadius: BorderRadius.circular(8.r),
+        ),
+        child: Row(
+          children: [
+            // Icon or loading indicator
+            if (isLoading)
+              SizedBox(
+                width: 20.w,
+                height: 20.w,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                  valueColor: AlwaysStoppedAnimation<Color>(AppTheme.primaryColor),
                 ),
               )
             else
               Icon(
-                Icons.lock,
-                size: 16.w,
+                isLesson ? Icons.play_circle_outline : Icons.quiz,
+                size: 20.w,
                 color: AppTheme.textSecondaryColor,
               ),
+            SizedBox(width: 12.w),
+            
+            // Title and duration
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    item.title,
+                    style: AppTheme.bodyMedium.copyWith(
+                      color: isLoading 
+                          ? AppTheme.textSecondaryColor 
+                          : AppTheme.textPrimaryColor,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  if (isLesson && item.duration != null) ...[
+                    SizedBox(height: 4.h),
+                    Text(
+                      item.duration!,
+                      style: AppTheme.bodySmall.copyWith(
+                        color: AppTheme.textSecondaryColor,
+                      ),
+                    ),
+                  ],
+                ],
+              ),
+            ),
           ],
-        ],
+        ),
       ),
     );
   }
@@ -417,6 +418,84 @@ class _CourseDetailTabsState extends State<CourseDetailTabs> with SingleTickerPr
         ),
       ],
     );
+  }
+
+  Future<void> _handleLessonTap(String lessonId, String courseId) async {
+    try {
+      if (!mounted) return;
+      
+      // Set loading state for this specific lesson
+      setState(() {
+        _loadingLessonId = lessonId;
+      });
+      
+      // Fetch file info
+      final getFileInfoUseCase = sl<GetLessonFileInfoUseCase>();
+      final fileInfoResult = await getFileInfoUseCase(
+        courseId: courseId,
+        lessonId: lessonId,
+      );
+
+      fileInfoResult.fold(
+        (failure) {
+          Logger().e('Failed to get file info: ${failure.message}');
+          if (mounted) {
+            setState(() {
+              _loadingLessonId = null; // Clear loading state on failure
+            });
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('Failed to load lesson: ${failure.message}')),
+            );
+          }
+        },
+        (fileInfoResponse) async {
+          final filePath = fileInfoResponse.fileInfo.filePath;
+          final storage = fileInfoResponse.fileInfo.storage;
+          
+          // Fetch lesson progress
+          final getProgressUseCase = sl<GetLessonProgressUseCase>();
+          final progressResult = await getProgressUseCase(
+            courseId: courseId,
+            lessonId: lessonId,
+          );
+
+          double startTime = 0.0;
+          progressResult.fold(
+            (failure) {
+              Logger().e('Failed to get progress: ${failure.message}');
+              // Continue with startTime = 0.0 if progress fetch fails
+            },
+            (progressResponse) {
+              // Parse current_time string to double
+              final currentTimeStr = progressResponse.progress.currentTime;
+              startTime = double.tryParse(currentTimeStr) ?? 0.0;
+            },
+          );
+
+          // Clear loading state before playing video
+          if (mounted) {
+            setState(() {
+              _loadingLessonId = null;
+            });
+            
+            // Play video with file path, storage type, and start time
+            if (widget.onLessonTap != null) {
+              widget.onLessonTap?.call(filePath, storage, startTime);
+            }
+          }
+        },
+      );
+    } catch (e, stackTrace) {
+      Logger().e('Error handling lesson tap: $e', stackTrace: stackTrace);
+      if (mounted) {
+        setState(() {
+          _loadingLessonId = null; // Clear loading state on error
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('An error occurred while loading the lesson')),
+        );
+      }
+    }
   }
 
   Widget _buildMeetingsTab() {

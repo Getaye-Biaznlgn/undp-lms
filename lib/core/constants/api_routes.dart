@@ -40,5 +40,10 @@ class ApiRoutes{
   static const String meetingsByCourse = "/meetings/by-course?course_id={course_id}";
   static const String meetingsByUser = "/meetings/by-user?user_id={user_id}";
 
+//Less play
+static const String getFileInfo = "/courses/{course_id}/lessons/{lesson_id}/file-info";
+//update lesson progress
+static const String getLessonProgress = "/student/courses/{course_id}/lessons/{lesson_id}/progress";
+// it help us to get where the user is in the course and start playing the video from the same point
 
   }

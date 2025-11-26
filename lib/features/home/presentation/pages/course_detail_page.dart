@@ -21,6 +21,8 @@ class CourseDetailPage extends StatefulWidget {
 }
 
 class _CourseDetailPageState extends State<CourseDetailPage> {
+  final GlobalKey<CourseDetailHeaderState> _headerKey = GlobalKey<CourseDetailHeaderState>();
+
   @override
   void initState() {
     super.initState();
@@ -61,6 +63,7 @@ class _CourseDetailPageState extends State<CourseDetailPage> {
                 SizedBox(
                   height: 250.h,
                   child: CourseDetailHeader(
+                    key: _headerKey,
                     courseDetail: state.courseDetail,
                   ),
                 ),
@@ -76,6 +79,12 @@ class _CourseDetailPageState extends State<CourseDetailPage> {
                         // Tabs Section
                         CourseDetailTabs(
                           courseDetail: state.courseDetail,
+                          onLessonTap: (videoUrl, storage, startTime) {
+                            final headerState = _headerKey.currentState;
+                            if (headerState != null) {
+                              headerState.playVideo(videoUrl, storage: storage, startTime: startTime);
+                            }
+                          },
                         ),
                       ],
                     ),

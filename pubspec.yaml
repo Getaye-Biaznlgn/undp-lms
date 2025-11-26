@@ -46,11 +46,12 @@ dependencies:
   logger: ^2.6.1
   flutter_screenutil: ^5.9.0
   webview_flutter: ^4.9.0
+  youtube_player_flutter: ^9.1.0
   image_picker: ^1.1.2
   socket_io_client: ^3.1.2
   url_launcher: ^6.3.1
   intl: ^0.19.0
-  # Using webview_flutter for embedded YouTube videos in the header
+  # Using youtube_player_flutter for YouTube videos and webview_flutter for regular videos
 
 dev_dependencies:
   flutter_test:

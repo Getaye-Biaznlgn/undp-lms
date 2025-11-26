@@ -36,12 +36,15 @@ import 'package:lms/features/courses/presentation/bloc/courses_bloc.dart';
 import 'package:lms/features/home/data/datasources/course_detail_data_source.dart';
 import 'package:lms/features/home/data/datasources/quiz_data_source.dart';
 import 'package:lms/features/home/data/datasources/meeting_data_source.dart';
+import 'package:lms/features/home/data/datasources/lesson_data_source.dart';
 import 'package:lms/features/home/data/repositories/course_detail_repository_impl.dart';
 import 'package:lms/features/home/data/repositories/quiz_repository_impl.dart';
 import 'package:lms/features/home/data/repositories/meeting_repository_impl.dart';
+import 'package:lms/features/home/data/repositories/lesson_repository_impl.dart';
 import 'package:lms/features/home/domain/repositories/course_detail_repository.dart';
 import 'package:lms/features/home/domain/repositories/quiz_repository.dart';
 import 'package:lms/features/home/domain/repositories/meeting_repository.dart';
+import 'package:lms/features/home/domain/repositories/lesson_repository.dart';
 import 'package:lms/features/home/domain/usecases/get_course_details_usecase.dart';
 import 'package:lms/features/home/domain/usecases/get_quizzes_by_course_id_usecase.dart';
 import 'package:lms/features/home/domain/usecases/get_quiz_detail_usecase.dart';
@@ -49,6 +52,8 @@ import 'package:lms/features/home/domain/usecases/submit_quiz_usecase.dart';
 import 'package:lms/features/home/domain/usecases/get_quiz_results_usecase.dart';
 import 'package:lms/features/home/domain/usecases/get_all_meetings_usecase.dart';
 import 'package:lms/features/home/domain/usecases/get_meetings_by_course_id_usecase.dart';
+import 'package:lms/features/home/domain/usecases/get_lesson_file_info_usecase.dart';
+import 'package:lms/features/home/domain/usecases/get_lesson_progress_usecase.dart';
 import 'package:lms/features/home/presentation/bloc/course_detail_bloc.dart';
 import 'package:lms/features/home/presentation/bloc/quiz_bloc.dart';
 import 'package:lms/features/home/presentation/bloc/meeting_bloc.dart';
@@ -168,6 +173,8 @@ Future<void> init() async {
           sl.registerLazySingleton(() => GetQuizResultsUseCase(repository: sl()));
           sl.registerLazySingleton(() => GetAllMeetingsUseCase(repository: sl()));
           sl.registerLazySingleton(() => GetMeetingsByCourseIdUseCase(repository: sl()));
+          sl.registerLazySingleton(() => GetLessonFileInfoUseCase(repository: sl()));
+          sl.registerLazySingleton(() => GetLessonProgressUseCase(repository: sl()));
           sl.registerLazySingleton(() => GetEnrolledCoursesUseCase(repository: sl()));
           sl.registerLazySingleton(() => GetUserProfileUseCase(repository: sl()));
           sl.registerLazySingleton(() => UpdateProfileUseCase(sl()));
@@ -211,6 +218,11 @@ Future<void> init() async {
       dataSource: sl(),
     ),
   );
+  sl.registerLazySingleton<LessonRepository>(
+    () => LessonRepositoryImpl(
+      dataSource: sl(),
+    ),
+  );
   sl.registerLazySingleton<EnrolledCoursesRepository>(
     () => EnrolledCoursesRepositoryImpl(
       dataSource: sl(),
@@ -243,6 +255,9 @@ Future<void> init() async {
   );
   sl.registerLazySingleton<MeetingDataSource>(
     () => MeetingDataSourceImpl(),
+  );
+  sl.registerLazySingleton<LessonDataSource>(
+    () => LessonDataSourceImpl(),
   );
   sl.registerLazySingleton<EnrolledCoursesDataSource>(
     () => EnrolledCoursesDataSourceImpl(),
