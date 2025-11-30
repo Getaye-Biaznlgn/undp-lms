@@ -3,17 +3,20 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:lms/core/constants/api_routes.dart';
 import 'package:lms/core/theme/app_theme.dart';
 import 'package:lms/features/home/data/models/course_detail_model.dart';
+import 'package:logger/logger.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
 class CourseDetailHeader extends StatefulWidget {
   final CourseDetailModel courseDetail;
   final Function(String)? onVideoUrlChanged;
+  final VoidCallback? onContentLoaded; // Callback when content finishes loading
 
   const CourseDetailHeader({
     super.key,
     required this.courseDetail,
     this.onVideoUrlChanged,
+    this.onContentLoaded,
   });
 
   @override
@@ -84,12 +87,24 @@ class CourseDetailHeaderState extends State<CourseDetailHeader> {
 
   void playVideo(String videoUrl, {String? storage, double startTime = 0.0}) {
     if (mounted) {
+      Logger().d('playVideo called - videoUrl: $videoUrl, storage: $storage');
+      
+      // Skip if it's a document type (PDFs not supported)
+      if (storage == 'document' || storage == 'pdf') {
+        Logger().d('Document type detected, skipping video player');
+        if (widget.onContentLoaded != null) {
+          widget.onContentLoaded!();
+        }
+        return;
+      }
+      
       setState(() {
         _currentVideoUrl = videoUrl;
         _startTime = startTime;
         _isVideoPlaying = false; // Reset to show thumbnail first
       });
       _extractVideoId(storage: storage);
+      Logger().d('After extractVideoId - _isYouTubeVideo: $_isYouTubeVideo, _videoId: $_videoId');
       
       // Initialize YouTube player controller if it's a YouTube video
       if (_isYouTubeVideo && _videoId != null) {
@@ -108,7 +123,8 @@ class CourseDetailHeaderState extends State<CourseDetailHeader> {
         );
       }
       
-      if (_videoId != null) {
+      // Show video player if we have a valid video ID
+      if (_videoId != null && _videoId!.isNotEmpty) {
         setState(() {
           _isVideoPlaying = true;
         });
@@ -170,8 +186,10 @@ class CourseDetailHeaderState extends State<CourseDetailHeader> {
         },
       );
     } else {
+      // Regular video files
       _webViewController = WebViewController()
         ..setJavaScriptMode(JavaScriptMode.unrestricted)
+        ..setBackgroundColor(Colors.black)
         ..loadHtmlString('''
           <!DOCTYPE html>
           <html>
@@ -209,6 +227,9 @@ class CourseDetailHeaderState extends State<CourseDetailHeader> {
               video.currentTime = $_startTime;
               video.addEventListener('loadedmetadata', function() {
                 video.currentTime = $_startTime;
+              });
+              video.addEventListener('error', function(e) {
+                console.error('Video load error:', e);
               });
             </script>
           </body>

@@ -22,6 +22,7 @@ class CourseDetailPage extends StatefulWidget {
 
 class _CourseDetailPageState extends State<CourseDetailPage> {
   final GlobalKey<CourseDetailHeaderState> _headerKey = GlobalKey<CourseDetailHeaderState>();
+  VoidCallback? _clearLoadingCallback;
 
   @override
   void initState() {
@@ -65,6 +66,7 @@ class _CourseDetailPageState extends State<CourseDetailPage> {
                   child: CourseDetailHeader(
                     key: _headerKey,
                     courseDetail: state.courseDetail,
+                    onContentLoaded: _clearLoadingCallback,
                   ),
                 ),
                 // Scrollable Content Below Video
@@ -84,6 +86,9 @@ class _CourseDetailPageState extends State<CourseDetailPage> {
                             if (headerState != null) {
                               headerState.playVideo(videoUrl, storage: storage, startTime: startTime);
                             }
+                          },
+                          onLoadingStateCallback: (callback) {
+                            _clearLoadingCallback = callback;
                           },
                         ),
                       ],

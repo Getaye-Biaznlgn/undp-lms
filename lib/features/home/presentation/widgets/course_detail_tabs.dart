@@ -15,11 +15,13 @@ import 'package:lms/dependency_injection.dart';
 class CourseDetailTabs extends StatefulWidget {
   final CourseDetailModel courseDetail;
   final Function(String, String, double)? onLessonTap; // (filePath, storage, startTime)
+  final Function(VoidCallback)? onLoadingStateCallback; // Callback to provide clearLoading method
 
   const CourseDetailTabs({
     super.key,
     required this.courseDetail,
     this.onLessonTap,
+    this.onLoadingStateCallback,
   });
 
   @override
@@ -29,6 +31,15 @@ class CourseDetailTabs extends StatefulWidget {
 class _CourseDetailTabsState extends State<CourseDetailTabs> with SingleTickerProviderStateMixin {
   late TabController _tabController;
   String? _loadingLessonId; // Track which lesson is currently loading
+  
+  // Method to clear loading state (can be called from outside)
+  void clearLoadingState() {
+    if (mounted) {
+      setState(() {
+        _loadingLessonId = null;
+      });
+    }
+  }
 
   @override
   void initState() {
@@ -36,6 +47,13 @@ class _CourseDetailTabsState extends State<CourseDetailTabs> with SingleTickerPr
     _tabController = TabController(length: 5, vsync: this);
     _tabController.animateTo(0); // Start with Overview tab
     _tabController.addListener(_onTabChanged);
+    
+    // Provide the clearLoadingState method to parent via callback
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (widget.onLoadingStateCallback != null) {
+        widget.onLoadingStateCallback!(clearLoadingState);
+      }
+    });
   }
 
   void _onTabChanged() {
@@ -206,12 +224,19 @@ class _CourseDetailTabsState extends State<CourseDetailTabs> with SingleTickerPr
 
   Widget _buildChapterItem(Chapter chapter) {
     final isLesson = chapter.type == 'lesson';
+    final isDocumentType = chapter.type == 'document';
     final item = chapter.item;
     final lessonId = item.id.toString();
     final isLoading = _loadingLessonId == lessonId;
+    final isVideo = item.fileType == 'video';
+    final isPdf = item.fileType == 'pdf';
+    // Document can be: chapter.type == 'document' OR item.fileType == 'pdf'
+    final isDocument = isDocumentType || isPdf;
+    // Can tap if: (lesson with video) OR (document type)
+    final canTap = ((isLesson && isVideo) || isDocument) && !isLoading;
     
     return GestureDetector(
-      onTap: isLesson && item.fileType == 'video' && widget.onLessonTap != null && !isLoading
+      onTap: canTap && widget.onLessonTap != null
           ? () => _handleLessonTap(lessonId, widget.courseDetail.id)
           : null,
       child: Container(
@@ -235,7 +260,13 @@ class _CourseDetailTabsState extends State<CourseDetailTabs> with SingleTickerPr
               )
             else
               Icon(
-                isLesson ? Icons.play_circle_outline : Icons.quiz,
+                isLesson || isDocumentType
+                    ? (isVideo 
+                        ? Icons.play_circle_outline 
+                        : isDocument 
+                            ? Icons.insert_drive_file 
+                            : Icons.play_circle_outline)
+                    : Icons.quiz,
                 size: 20.w,
                 color: AppTheme.textSecondaryColor,
               ),
@@ -451,36 +482,70 @@ class _CourseDetailTabsState extends State<CourseDetailTabs> with SingleTickerPr
         (fileInfoResponse) async {
           final filePath = fileInfoResponse.fileInfo.filePath;
           final storage = fileInfoResponse.fileInfo.storage;
+          final fileType = fileInfoResponse.fileInfo.fileType;
+          final type = fileInfoResponse.fileInfo.type; // 'lesson' or 'document'
           
-          // Fetch lesson progress
-          final getProgressUseCase = sl<GetLessonProgressUseCase>();
-          final progressResult = await getProgressUseCase(
-            courseId: courseId,
-            lessonId: lessonId,
-          );
-
+          Logger().d('File Info - filePath: $filePath, fileType: $fileType, type: $type, storage: $storage');
+          
+          // Determine if it's a document: check both type and fileType fields
+          final isDocument = type == 'document' || fileType == 'pdf' || fileType == 'document';
+          final isVideo = fileType == 'video';
+          
+          Logger().d('Is Document: $isDocument, Is Video: $isVideo');
+          
           double startTime = 0.0;
-          progressResult.fold(
-            (failure) {
-              Logger().e('Failed to get progress: ${failure.message}');
-              // Continue with startTime = 0.0 if progress fetch fails
-            },
-            (progressResponse) {
-              // Parse current_time string to double
-              final currentTimeStr = progressResponse.progress.currentTime;
-              startTime = double.tryParse(currentTimeStr) ?? 0.0;
-            },
-          );
+          
+          // Only fetch progress for video files
+          if (isVideo) {
+            // Fetch lesson progress
+            final getProgressUseCase = sl<GetLessonProgressUseCase>();
+            final progressResult = await getProgressUseCase(
+              courseId: courseId,
+              lessonId: lessonId,
+            );
 
-          // Clear loading state before playing video
-          if (mounted) {
-            setState(() {
-              _loadingLessonId = null;
-            });
+            progressResult.fold(
+              (failure) {
+                Logger().e('Failed to get progress: ${failure.message}');
+                // Continue with startTime = 0.0 if progress fetch fails
+              },
+              (progressResponse) {
+                // Parse current_time string to double
+                final currentTimeStr = progressResponse.progress.currentTime;
+                startTime = double.tryParse(currentTimeStr) ?? 0.0;
+              },
+            );
+          }
+
+          // Display file in video player area (works for both videos and documents)
+          if (mounted && filePath.isNotEmpty && widget.onLessonTap != null) {
+            // For documents, pass 'pdf' or 'document' as storage to indicate document type
+            // For videos, pass the actual storage value
+            final storageParam = isDocument 
+                ? (fileType == 'pdf' ? 'pdf' : 'document')
+                : storage;
             
-            // Play video with file path, storage type, and start time
-            if (widget.onLessonTap != null) {
-              widget.onLessonTap?.call(filePath, storage, startTime);
+            // Clear loading state for videos immediately (documents will clear when loaded)
+            if (isVideo) {
+              setState(() {
+                _loadingLessonId = null;
+              });
+            }
+            // For documents, loading will be cleared when document finishes loading in WebView
+            // via the onContentLoaded callback from CourseDetailHeader
+            
+            widget.onLessonTap?.call(filePath, storageParam, startTime);
+          } else {
+            // Clear loading state if file path is empty
+            if (mounted) {
+              setState(() {
+                _loadingLessonId = null;
+              });
+              if (filePath.isEmpty) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('File URL is not available')),
+                );
+              }
             }
           }
         },
