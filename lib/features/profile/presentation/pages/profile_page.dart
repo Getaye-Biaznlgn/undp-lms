@@ -235,6 +235,12 @@ class ProfilePage extends StatelessWidget {
           },
         ),
         _buildListItem(
+          title: 'Downloads',
+          onTap: () {
+            context.push(AppRouter.downloads);
+          },
+        ),
+        _buildListItem(
           title: 'Account Setting',
           onTap: () {
             // Handle account settings

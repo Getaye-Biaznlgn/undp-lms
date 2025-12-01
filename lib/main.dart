@@ -1,5 +1,7 @@
 import 'package:lms/core/services/api_service.dart';
 import 'package:lms/core/services/localstorage_service.dart';
+import 'package:lms/core/services/offline_storage_service.dart';
+import 'package:lms/core/services/download_manager_service.dart';
 import 'package:lms/core/theme/app_theme.dart';
 import 'package:lms/core/router/app_router.dart';
 import 'package:flutter/material.dart';
@@ -22,8 +24,13 @@ import 'package:lms/features/main/presentation/bloc/main_bloc.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await di.init();
-   await sl<ApiService>().init();
+  await sl<ApiService>().init();
   await AppPreferences().init();
+  
+  // Initialize offline storage and download manager
+  await OfflineStorageService.init();
+  await DownloadManagerService().init();
+  
   runApp(const MyApp());
 }
 

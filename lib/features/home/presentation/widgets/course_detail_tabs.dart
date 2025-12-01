@@ -10,11 +10,12 @@ import 'package:lms/features/home/presentation/bloc/meeting_event.dart';
 import 'package:lms/features/home/presentation/widgets/course_meetings_widget.dart';
 import 'package:lms/features/home/domain/usecases/get_lesson_file_info_usecase.dart';
 import 'package:lms/features/home/domain/usecases/get_lesson_progress_usecase.dart';
+import 'package:lms/features/home/presentation/widgets/download_button.dart';
 import 'package:lms/dependency_injection.dart';
 
 class CourseDetailTabs extends StatefulWidget {
   final CourseDetailModel courseDetail;
-  final Function(String, String, double)? onLessonTap; // (filePath, storage, startTime)
+  final Function(String, String, double, String?, String?)? onLessonTap; // (filePath, storage, startTime, courseId, lessonId)
   final Function(VoidCallback)? onLoadingStateCallback; // Callback to provide clearLoading method
 
   const CourseDetailTabs({
@@ -298,6 +299,21 @@ class _CourseDetailTabsState extends State<CourseDetailTabs> with SingleTickerPr
                 ],
               ),
             ),
+            // Download button (only for video lessons)
+            if (isLesson && isVideo && !isDocument)
+              Padding(
+                padding: EdgeInsets.only(left: 8.w),
+                child: DownloadButton(
+                  courseId: widget.courseDetail.id,
+                  lessonId: lessonId,
+                  videoUrl: '', // Will be set when lesson is tapped
+                  lessonTitle: item.title,
+                  courseTitle: widget.courseDetail.title,
+                  courseSlug: widget.courseDetail.slug, // Pass course slug
+                  courseDetail: widget.courseDetail, // Pass full course detail model
+                  storage: null, // Will be determined from API response
+                ),
+              ),
           ],
         ),
       ),
@@ -534,7 +550,7 @@ class _CourseDetailTabsState extends State<CourseDetailTabs> with SingleTickerPr
             // For documents, loading will be cleared when document finishes loading in WebView
             // via the onContentLoaded callback from CourseDetailHeader
             
-            widget.onLessonTap?.call(filePath, storageParam, startTime);
+            widget.onLessonTap?.call(filePath, storageParam, startTime, courseId, lessonId);
           } else {
             // Clear loading state if file path is empty
             if (mounted) {

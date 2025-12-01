@@ -66,6 +66,7 @@ class _CourseDetailPageState extends State<CourseDetailPage> {
                   child: CourseDetailHeader(
                     key: _headerKey,
                     courseDetail: state.courseDetail,
+                    courseId: state.courseDetail.id,
                     onContentLoaded: _clearLoadingCallback,
                   ),
                 ),
@@ -81,10 +82,16 @@ class _CourseDetailPageState extends State<CourseDetailPage> {
                         // Tabs Section
                         CourseDetailTabs(
                           courseDetail: state.courseDetail,
-                          onLessonTap: (videoUrl, storage, startTime) {
+                          onLessonTap: (videoUrl, storage, startTime, courseId, lessonId) {
                             final headerState = _headerKey.currentState;
                             if (headerState != null) {
-                              headerState.playVideo(videoUrl, storage: storage, startTime: startTime);
+                              headerState.playVideo(
+                                videoUrl, 
+                                storage: storage, 
+                                startTime: startTime,
+                                courseId: courseId,
+                                lessonId: lessonId,
+                              );
                             }
                           },
                           onLoadingStateCallback: (callback) {

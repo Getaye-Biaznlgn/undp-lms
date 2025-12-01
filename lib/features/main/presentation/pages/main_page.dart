@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'package:lms/features/auth/presentation/bloc/user_profile_bloc.dart';
 import 'package:lms/features/chat/presentation/bloc/chat_users_bloc.dart';
+import 'package:lms/features/downloads/presentation/pages/downloads_page.dart';
 import 'package:lms/features/main/presentation/bloc/main_bloc.dart';
 import 'package:lms/features/home/presentation/pages/home_page.dart';
 import 'package:lms/features/courses/presentation/pages/courses_page.dart';
@@ -35,7 +36,8 @@ class MainView extends StatelessWidget {
             children: [
               const HomePage(),
               const CoursesPage(),
-              const SavedPage(),
+              // const SavedPage(),
+              const DownloadsPage(),
               const ChatUserPage(),
               const ProfilePage(),
             ],
